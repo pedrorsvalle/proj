@@ -14,6 +14,8 @@ namespace chillerlan\QRCode\Data;
 
 use chillerlan\QRCode\QRCode;
 
+use function ord;
+
 /**
  * Byte mode, ISO-8859-1 or UTF-8
  */

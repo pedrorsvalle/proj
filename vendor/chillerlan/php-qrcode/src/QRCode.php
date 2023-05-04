@@ -16,9 +16,11 @@ use chillerlan\QRCode\Data\{
 	MaskPatternTester, QRCodeDataException, QRDataInterface, QRMatrix
 };
 use chillerlan\QRCode\Output\{
-	QRCodeOutputException, QRImage, QRImagick, QRMarkup, QROutputInterface, QRString
+	QRCodeOutputException, QRFpdf, QRImage, QRImagick, QRMarkup, QROutputInterface, QRString
 };
 use chillerlan\Settings\SettingsContainerInterface;
+
+use function array_search, call_user_func_array, class_exists, in_array, min, ord, strlen;
 
 /**
  * Turns a text string into a Model 2 QR Code
@@ -40,6 +42,7 @@ class QRCode{
 	public const OUTPUT_STRING_JSON = 'json';
 	public const OUTPUT_STRING_TEXT = 'text';
 	public const OUTPUT_IMAGICK     = 'imagick';
+	public const OUTPUT_FPDF        = 'fpdf';
 	public const OUTPUT_CUSTOM      = 'custom';
 
 	public const VERSION_AUTO       = -1;
@@ -86,10 +89,13 @@ class QRCode{
 		QRImagick::class => [
 			self::OUTPUT_IMAGICK,
 		],
+		QRFpdf::class => [
+			self::OUTPUT_FPDF
+		]
 	];
 
 	/**
-	 * @var \chillerlan\QRCode\QROptions
+	 * @var \chillerlan\QRCode\QROptions|\chillerlan\Settings\SettingsContainerInterface
 	 */
 	protected $options;
 
@@ -99,31 +105,12 @@ class QRCode{
 	protected $dataInterface;
 
 	/**
-	 * @see http://php.net/manual/function.mb-internal-encoding.php
-	 * @var string
-	 */
-	protected $mbCurrentEncoding;
-
-	/**
 	 * QRCode constructor.
 	 *
 	 * @param \chillerlan\Settings\SettingsContainerInterface|null $options
 	 */
 	public function __construct(SettingsContainerInterface $options = null){
-		// save the current mb encoding (in case it differs from UTF-8)
-		$this->mbCurrentEncoding = mb_internal_encoding();
-		// use UTF-8 from here on
-		mb_internal_encoding('UTF-8');
-
 		$this->options = $options ?? new QROptions;
-	}
-
-	/**
-	 * @return void
-	 */
-	public function __destruct(){
-		// restore the previous mb_internal_encoding, so that we don't mess up the rest of the script
-		mb_internal_encoding($this->mbCurrentEncoding);
 	}
 
 	/**
@@ -195,9 +182,19 @@ class QRCode{
 	 * @throws \chillerlan\QRCode\Data\QRCodeDataException
 	 */
 	public function initDataInterface(string $data):QRDataInterface{
+		$dataModes     = ['Number', 'AlphaNum', 'Kanji', 'Byte'];
+		$dataNamespace = __NAMESPACE__.'\\Data\\';
 
-		foreach(['Number', 'AlphaNum', 'Kanji', 'Byte'] as $mode){
-			$dataInterface = __NAMESPACE__.'\\Data\\'.$mode;
+		// allow forcing the data mode
+		// see https://github.com/chillerlan/php-qrcode/issues/39
+		if(in_array($this->options->dataMode, $dataModes, true)){
+			$dataInterface = $dataNamespace.$this->options->dataMode;
+
+			return new $dataInterface($this->options, $data);
+		}
+
+		foreach($dataModes as $mode){
+			$dataInterface = $dataNamespace.$mode;
 
 			if(call_user_func_array([$this, 'is'.$mode], [$data]) && class_exists($dataInterface)){
 				return new $dataInterface($this->options, $data);
@@ -287,7 +284,7 @@ class QRCode{
 		$len = strlen($string);
 
 		while($i + 1 < $len){
-			$c = ((0xff&ord($string[$i])) << 8)|(0xff&ord($string[$i + 1]));
+			$c = ((0xff & ord($string[$i])) << 8) | (0xff & ord($string[$i + 1]));
 
 			if(!($c >= 0x8140 && $c <= 0x9FFC) && !($c >= 0xE040 && $c <= 0xEBBF)){
 				return false;

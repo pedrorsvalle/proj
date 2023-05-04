@@ -21,14 +21,16 @@ if( !isset($_SESSION['login']) || $_SESSION['login'] == "" ) {
 }
 
 //die($login.":");
-//
+
+if(!empty($_GET['acao']))
 if( $_GET['acao'] == 'sair' ){
 	session_destroy();
 	header("Location: index.php");
 	die();
 }
-////////////////////////////////
 
+////////////////////////////////
+if(!empty($_GET['acao']))
 if( $_GET['acao'] == 'emitirCerificado'){
 	require_once('mysql.php');
 	$sql = " select * from palestra order by nome";
@@ -65,6 +67,7 @@ if( $_GET['acao'] == 'emitirCerificado'){
 
 }
 
+if(!empty($_GET['acao']))
 if( $_GET['acao'] == 'emitirCerificadoAluno'){
 
 	require_once('mysql.php');
@@ -106,6 +109,7 @@ if( $_GET['acao'] == 'emitirCerificadoAluno'){
 //zzz
 }
 
+if(!empty($_GET['acao']))
 if( $_GET['acao'] == 'prnCertificado'){
 	require_once('mysql.php');
 	$sql = " 
@@ -184,7 +188,7 @@ $data = 'otpauth://totp/test?secret=B3JX4VCVJDVNXNZ5&issuer=chillerlan.net';
 QRcode::png($data, 'out.png');
 */
 
-include 'phpqrcode/qrlib.php';
+include '/phpqrcode/qrlib.php';
 $text = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
 $text.= "?acao=prnCertificado&id= id= {$_GET['id']}";
 //echo $text;  
@@ -228,7 +232,7 @@ imagejpeg($jpg, 'out.jpg');
 
 
 ////////////////////////////////
-
+if(!empty($_GET['acao']))
 if( $_GET['acao'] == 'certificadoAlunoApaga'){
 		
 		$sql = "DELETE FROM certificadoAluno where id= {$_GET['id']}  ";
@@ -245,7 +249,7 @@ if( $_GET['acao'] == 'certificadoAlunoApaga'){
 			<div style='background:green'>
 		
 				<div class='alert alert-success' role='alert'>
-					  Dados apagados com sucesso, para proceguir clique <a href='index.php?acao=certificadoAluno'>aqui</a>
+					  Dados apagados com sucesso, para prosseguir clique <a href='index.php?acao=certificadoAluno'>aqui</a>
 				</div>
 
 			</div>
@@ -270,6 +274,8 @@ if( $_GET['acao'] == 'certificadoAlunoApaga'){
 	die();
 
 }
+
+if(!empty($_GET['acao']))
 if( $_GET['acao'] == 'certificadoAlunoNova' || $_GET['acao'] == 'certificadoAlunoEdit'){
 
 	
@@ -312,7 +318,7 @@ if( $_GET['acao'] == 'certificadoAlunoNova' || $_GET['acao'] == 'certificadoAlun
 			<div style='background:green'>
 		
 				<div class='alert alert-success' role='alert'>
-					  Dados inseridos com sucesso, para proceguir clique <a href='index.php?acao=certificadoAluno'>aqui</a>
+					  Dados inseridos com sucesso, para prosseguir clique <a href='index.php?acao=certificadoAluno'>aqui</a>
 				</div>
 
 			</div>
@@ -337,7 +343,7 @@ if( $_GET['acao'] == 'certificadoAlunoNova' || $_GET['acao'] == 'certificadoAlun
 				<tr><td>Nome</td><td><input type="text" name="nome" value="<?php echo $_POST['nome'] ?>"><td><?php echo $nome_erro ?></td></tr>
 				<tr><td>Email</td><td><input type="text" name="email" value="<?php echo $_POST['email'] ?>"><?php echo $email_erro ?></td></tr>
 				<input type="hidden" name="id" value="<?php echo $_POST['id'] ?>">
-				<tr><td><input type="submit" name=OK value=OK></td></tr>
+				<tr><td><input type="submit" name="OK" value="OK"></td></tr>
 			</div>
 
 		</div>
@@ -407,7 +413,7 @@ if( $_GET['acao'] == 'certificadoAlunoNova' || $_GET['acao'] == 'certificadoAlun
 					<tr><td>Nome </td><td>  <select name='aluno'> <?php echo $aluno; ?> </select> </td><td><?php echo $aluno_erro ?></td></tr>
 					<tr><td>Palestra</td><td>  <select name='palestra'> <?php echo $palestra; ?> </select> </td><td><?php echo $palestra_erro ?></td></tr>
 					<input type="hidden" name="id" value="<?php echo $_POST['id'] ?>">
-					<tr><td><input type="submit" name=OK value=OK></td></tr>
+					<tr><td><input type="submit" name="OK" value="OK"></td></tr>
 				</div>
 
 			</div>
@@ -420,7 +426,7 @@ if( $_GET['acao'] == 'certificadoAlunoNova' || $_GET['acao'] == 'certificadoAlun
 
 }
 
-
+if(!empty($_GET['acao']))
 if( $_GET['acao'] == 'certificadoAluno' ){
 	require_once('mysql.php');
 	$sql = "SELECT certificadoAluno.id, id_aluno, id_palestra, aluno.nome as nomealuno, palestra.nome as nomepalestra  
@@ -447,7 +453,7 @@ if( $_GET['acao'] == 'certificadoAluno' ){
 			</tr>";
 		
 	}
-	$msn .= "</table>";
+	$msg .= "</table>";
 	}
 	$acao = "msg";
 	include("header.html");
@@ -467,11 +473,7 @@ if( $_GET['acao'] == 'certificadoAluno' ){
 	die();	
 }
 
-
-
-
-
-////////////////////////////////
+if(!empty($_GET['acao']))
 if( $_GET['acao'] == 'alunoApaga'){
 		
 		$sql = "DELETE FROM aluno where id= {$_GET['id']}  ";
@@ -488,7 +490,7 @@ if( $_GET['acao'] == 'alunoApaga'){
 			<div style='background:green'>
 		
 				<div class='alert alert-success' role='alert'>
-					  Dados apagados com sucesso, para proceguir clique <a href='index.php?acao=aluno'>aqui</a>
+					  Dados apagados com sucesso, para prosseguir clique <a href='index.php?acao=aluno'>aqui</a>
 				</div>
 
 			</div>
@@ -513,6 +515,8 @@ if( $_GET['acao'] == 'alunoApaga'){
 	die();
 
 }
+
+if(!empty($_GET['acao']))
 if( $_GET['acao'] == 'alunoNova' || $_GET['acao'] == 'alunoEdit'){
 
 	
@@ -554,7 +558,7 @@ if( $_GET['acao'] == 'alunoNova' || $_GET['acao'] == 'alunoEdit'){
 			<div style='background:green'>
 		
 				<div class='alert alert-success' role='alert'>
-					  Dados inseridos com sucesso, para proceguir clique <a href='index.php?acao=aluno'>aqui</a>
+					  Dados inseridos com sucesso, para prosseguir clique <a href='index.php?acao=aluno'>aqui</a>
 				</div>
 
 			</div>
@@ -582,7 +586,7 @@ if( $_GET['acao'] == 'alunoNova' || $_GET['acao'] == 'alunoEdit'){
 	<tr><td>Nome</td><td><input type="text" name="nome" value="<?php echo $_POST['nome'] ?>"><td><?php echo $nome_erro ?></td></tr>
 	<tr><td>Email</td><td><input type="text" name="email" value="<?php echo $_POST['email'] ?>"><?php echo $email_erro ?></td></tr>
 	<input type="hidden" name="id" value="<?php echo $_POST['id'] ?>">
-	<tr><td><input type="submit" name=OK value=OK></td></tr>
+	<tr><td><input type="submit" name="OK" value="OK"></td></tr>
 
 				</div>
 
@@ -624,7 +628,7 @@ if( $_GET['acao'] == 'alunoNova' || $_GET['acao'] == 'alunoEdit'){
 	<tr><td>Nome</td><td><input type="text" name="nome" value="<?php echo $_POST['nome'] ?>"><td><?php echo $nome_erro ?></td></tr>
 	<tr><td>Email</td><td><input type="text" name="email" value="<?php echo $_POST['email'] ?>"><?php echo $email_erro ?></td></tr>
 	<input type="hidden" name="id" value="<?php echo $_POST['id'] ?>">
-	<tr><td><input type="submit" name=OK value=OK></td></tr>
+	<tr><td><input type="submit" name="OK" value="OK"></td></tr>
 				</div>
 
 			</div>
@@ -636,7 +640,7 @@ if( $_GET['acao'] == 'alunoNova' || $_GET['acao'] == 'alunoEdit'){
 
 }
 
-
+if(!empty($_GET['acao']))
 if( $_GET['acao'] == 'aluno' ){
 	require_once('mysql.php');
 	$sql = "SELECT * FROM aluno order by nome";
@@ -658,7 +662,7 @@ if( $_GET['acao'] == 'aluno' ){
 			</tr>";
 		
 	}
-	$msn .= "</table>";
+	$msg .= "</table>";
 	}
 	$acao = "msg";
 	include("header.html");
@@ -680,9 +684,7 @@ if( $_GET['acao'] == 'aluno' ){
 }
 
 
-
-
-
+if(!empty($_GET['acao']))
 if( $_GET['acao'] == 'palestraApaga'){
 		
 		$sql = "DELETE FROM palestra where id= {$_GET['id']}  ";
@@ -699,7 +701,7 @@ if( $_GET['acao'] == 'palestraApaga'){
 				<div style='background:green'>
 			
 					<div class='alert alert-success' role='alert'>
-						  Dados apagados com sucesso, para proceguir clique <a href='index.php?acao=palestra'>aqui</a>
+						  Dados apagados com sucesso, para prosseguir clique <a href='index.php?acao=palestra'>aqui</a>
 					</div>
 
 				</div>
@@ -724,26 +726,39 @@ if( $_GET['acao'] == 'palestraApaga'){
 	die();
 
 }
+
+if(!empty($_GET['acao']))
 if( $_GET['acao'] == 'palestraNova' || $_GET['acao'] == 'palestraEdit'){
 
+		if( $_GET['acao'] == 'palestraEdit'  ) {
+			$go = false;
+			if(isset($_POST['OK'])){
+				if ($_POST['OK'] != 'OK') {
+					$go = true;
+				}
+			}else
+				$go = true;
+			if ($go) {
+				$sql = "SELECT * FROM palestra where id= {$_GET['id']}  ";
+				require_once('mysql.php');
+				$result = $conn->query($sql);
+				if ($result) {
+					$row = $result->fetch_assoc();
+				}
+				$_POST['nome']=$row['nome'];
+				$_POST['data']=$row['data'];
+				$_POST['curso']=$row['curso'];
+				$_POST['palestra']=$row['palestra'];
+				$_POST['palestrante']=$row['palestrante'];
+				$_POST['instituicao']=$row['instituicao'];
+				$_POST['certificado_id']=$row['certificado_id'];
+				$_POST['id']=$row['id'];
+			}
+		}
 
-	if( $_GET['acao'] == 'palestraEdit' && $_POST['OK'] != 'OK' ) {
-		$sql = "SELECT * FROM palestra where id= {$_GET['id']}  ";
-		require_once('mysql.php');
-		$result = $conn->query($sql);
-		if( $result ) $row = $result->fetch_assoc();
-		$_POST['nome']=$row['nome'];
-		$_POST['data']=$row['data'];
-		$_POST['curso']=$row['curso'];
-		$_POST['palestra']=$row['palestra'];
-		$_POST['palestrante']=$row['palestrante'];
-		$_POST['instituicao']=$row['instituicao'];
-		$_POST['certificado_id']=$row['certificado_id'];
-		$_POST['id']=$row['id'];
-	}
-	
-	if( $_POST['OK'] ) {
+	if( isset($_POST['OK']) ){
 		$form = 1;
+		$erro = 0;
 		if( !$_POST['nome'] ) { $nome_erro = "o nome não pode estar vazio"; $erro = 1; }
 		if( !$_POST['data'] ) { $data_erro = "o data não pode estar vazio"; $erro = 1; }
 		if( !$_POST['curso'] ) { $curso_erro = "o curso não pode estar vazio"; $erro =1; }
@@ -751,6 +766,7 @@ if( $_GET['acao'] == 'palestraNova' || $_GET['acao'] == 'palestraEdit'){
 		if( !$_POST['palestrante'] ) { $palestrante_erro = "o palestrante não pode estar vazio"; $erro =1; }
 		if( !$_POST['instituicao'] ) { $instituicao_erro = "o instituicao não pode estar vazio"; $erro =1; }
 		if( !$_POST['certificado_id'] ) { $instituicao_erro = "o certificado não pode estar vazio"; $erro =1; }
+
 		if( !$erro ){
 			if($_POST['id'] ) {
 				$sql = "UPDATE palestra
@@ -768,13 +784,34 @@ if( $_GET['acao'] == 'palestraNova' || $_GET['acao'] == 'palestraEdit'){
 				$sql = "INSERT INTO 
 				palestra (nome, data, curso, palestra, palestrante, instituicao, certificado_id) VALUES 	('{$_POST['nome']}','{$_POST['data']}','{$_POST['curso']}','{$_POST['palestra']}','{$_POST['palestrante']}','{$_POST['instituicao']}',{$_POST['certificado_id']} )";
 			}
-		require_once('mysql.php');		
-		$result = $conn->query($sql);
-		//die($result);
-		// zzz 
-		if ($result ){
-		
-		
+			require_once('mysql.php');		
+			$result = $conn->query($sql);
+			//die($result);
+			// zzz 
+			if ($result ){
+				include("header.html");
+				?>
+				
+				<div class='h-100 d-flex align-items-center justify-content-center'>
+					<div style='background:green'>
+				
+						<div class='alert alert-success' role='alert'>
+							Dados inseridos com sucesso, para prosseguir clique <a href='index.php?acao=palestra'>aqui</a>
+						</div>
+
+					</div>
+				</div>
+				
+				<?php
+				include("footer.html");		
+				die();						
+			} else {
+				$msg = "Erro ao inserir dados inseridos clique <a href='index.php?acao=palestra'>aqui</a>";
+				$msg .= "Error: " . $sql . "<br>" . $conn->error;
+				$acao = "msg";
+			}
+
+		} else {
 			include("header.html");
 			?>
 			
@@ -782,29 +819,7 @@ if( $_GET['acao'] == 'palestraNova' || $_GET['acao'] == 'palestraEdit'){
 				<div style='background:green'>
 			
 					<div class='alert alert-success' role='alert'>
-						  Dados inseridos com sucesso, para proceguir clique <a href='index.php?acao=palestra'>aqui</a>
-					</div>
-
-				</div>
-			</div>      
-			<?php
-			include("footer.html");		
-			die();						
-		} else {
-			$msg = "Erro ao inserir dados inseridos clique <a href='index.php?acao=palestra'>aqui</a>";
-			$msg .= "Error: " . $sql . "<br>" . $conn->error;
-			$acao = "msg";
-		}
-
-		} else {
-				include("header.html");
-			?>
-			
-			<div class='h-100 d-flex align-items-center justify-content-center'>
-				<div style='background:green'>
-			
-					<div class='alert alert-success' role='alert'>
-						  selecione todos os campos <a href='index.php?acao=palestraEdit&id=<?php echo $_POST['id']?>'>aqui</a>
+							selecione todos os campos <a href='index.php?acao=palestraEdit&id=<?php echo $_POST['id']?>'>aqui</a>
 					</div>
 
 				</div>
@@ -817,63 +832,94 @@ if( $_GET['acao'] == 'palestraNova' || $_GET['acao'] == 'palestraEdit'){
 		//$msg = "Erro ao inserir dados inseridos clique <a href='index.php?acao=palestra'>aqui</a>";
 		//$acao = "msg";		
 		
-	?>
-	<div class="div">
-	<?php echo $msg; ?>
-	</div>
-	</div>
-	<?php
-	die();
-
+		?>
+		<div class="div">
+		<?php echo $msg; ?>
+		</div>
+		</div>
+		<?php
+		die();
 
 	} else {
 		$form = 0;
 		require_once('mysql.php');
 		$sql = "SELECT * FROM certificado order by id";
 		$result = $conn->query($sql);
+		$certificado = '';
 		if( $result )
-		while($row = $result->fetch_assoc()) {
-			$certificado .= "
-			<tr><td><input type='radio' id='{$row['id']}' name='certificado_id' value='{$row['id']}'></td>
-			<td><img style='width:50px;height:50px;margin-left:5px; float: right;' src='./certificados/{$row['arquivo']}'></td</tr>
-			";
-		}
+			while($row = $result->fetch_assoc()) {
+				if($row['id'] == $_POST['certificado_id'])
+					$selected = " checked ";
+				else 
+					$selected = "";
 
+				$certificado .= "
+				<tr>
+					<td><input type='radio' id='{$row['id']}' name='certificado_id' value='{$row['id']}' " . $selected .  "></td>
+					<td><img style='width:50px;height:50px;margin-left:5px; float: right;' src='./certificados/{$row['arquivo']}'></td
+				</tr>
+				";
+			}
 
-
-	include("header.html");
-	?>
+		include("header.html");
+		?>
 	
-	<div class='h-100 d-flex align-items-center justify-content-center'>
-		<div style='background:green'>
-	
-			<div class='alert alert-success' role='alert'>
+		<div class='h-100 d-flex align-items-center justify-content-center'>
+			<div style='background:green'>
+				<div class='alert alert-success' role='alert'>
 
-	<form method="post" action="index.php?acao=<?php echo $_GET['acao'] ?>">
-	<table class='table table-bordered'>
-	<tr><td>Nome</td><td><input type="text" name="nome" value="<?php echo $_POST['nome'] ?>"><td><?php echo $nome_erro ?></td></tr>
-	<tr><td>Data</td><td><input type="text" name="data" value="<?php echo $_POST['data'] ?>"><?php echo $data_erro ?></td></tr>
-	<tr><td>Curso</td><td><input type="text" name="curso" value="<?php echo $_POST['curso'] ?>"><?php echo $curso_erro ?></td></tr>
-	<tr><td>Palestra</td><td><input type="text" name="palestra" value="<?php echo $_POST['palestra'] ?>"><?php echo $palestra_erro ?></td></tr>
-	<tr><td>Palestrante</td><td><input type="text" name="palestrante" value="<?php echo $_POST['palestrante'] ?>"><?php echo $palestrante_erro ?></td></tr>
-	<tr><td>Instituição</td><td><input type="text" name="instituicao" value="<?php echo $_POST['instituicao'] ?>"><?php echo $instituicao_erro ?></td></tr>
-	<tr><td>Certificado</td><td><table><?php echo $certificado; ?></table></td><?php echo $certificado_erro ?></td></tr>
-	<input type="hidden" name="id" value="<?php echo $_GET['id'] ?>">
-	<tr><td><input type="submit" name=OK value=OK></td></tr>
+					<form method="post" action="index.php?acao=<?php echo $_GET['acao'] ?>">
+					<table class='table table-bordered'>
+						<tr>
+							<td>Nome</td>
+							<td><input type="text" name="nome" value="<?php echo $_POST['nome'] ?? '' ?>"><td><?php echo $nome_erro ?? '' ?></td>
+						</tr>
+						<tr>
+							<td>Data</td>
+							<td><input type="date" name="data" value="<?php echo $_POST['data'] ?? '' ?>"><?php echo $data_erro ?? '' ?></td>
+						</tr>
+						<tr>
+							<td>Curso</td>
+							<td><input type="text" name="curso" value="<?php echo $_POST['curso'] ?? '' ?>"><?php echo $curso_erro ?? '' ?></td>
+						</tr>
+						<tr>
+							<td>Palestra</td>
+							<td><input type="text" name="palestra" value="<?php echo $_POST['palestra'] ?? '' ?>"><?php echo $palestra_erro ?? '' ?></td>
+						</tr>
+						<tr>
+							<td>Palestrante</td>
+							<td><input type="text" name="palestrante" value="<?php echo $_POST['palestrante'] ?? '' ?>"><?php echo $palestrante_erro ?? '' ?></td>
+						</tr>
+						<tr>
+							<td>Instituição</td>
+							<td><input type="text" name="instituicao" value="<?php echo $_POST['instituicao'] ?? '' ?>"><?php echo $instituicao_erro ?? '' ?></td>
+						</tr>
+						<tr>
+							<td>Certificado</td>
+							<td>
+								<table>
+									<?php echo $certificado; ?>
+								</table>
+								<?php echo $certificado_erro ?? '' ?>
+							</td>
+						</tr>
+					</table>
+					<input type="hidden" name="id" value="<?php echo $_GET['id'] ?? '' ?>">
+					<input type="submit" name="OK" value="OK"></td></tr>
+				</div>
 			</div>
+		</div> 
 
-		</div>
-	</div>      
-	<?php
-	include("footer.html");
-	die();
+		<?php
+		include("footer.html");
+		die();
 
 
 	}
 
 }
 
-
+if(!empty($_GET['acao']))
 if( $_GET['acao'] == 'palestra' ){
 	require_once('mysql.php');
 	$sql = "SELECT * FROM palestra order by nome";
@@ -881,20 +927,20 @@ if( $_GET['acao'] == 'palestra' ){
 	$msg="<a href='index.php?acao=palestraNova'>Nova Palestra</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 	$msg.="<a href='index.php'>Voltar</a>";
 	$msg.="<table class='table table-bordered' >";
+	$msg .=  "<tr>
+		<td>Nome</td>
+		<td>data</td>
+		<td>curso</td>
+		<td>palestra</td>
+		<td>Palestrante</td>
+		<td>instituicao</td>
+		<td>Certificado</td>
+		<td>Ação</td>
+		</tr>";
 	while($row = $result->fetch_assoc()) {
 		$sql2 = "SELECT * FROM certificado where id= {$row['certificado_id']} ";
 		$result2 = $conn->query($sql2);
 		$row2 = $result2->fetch_assoc();
-		$msg .=  "<tr>
-			<td>Nome</td>
-			<td>data</td>
-			<td>curso</td>
-			<td>palestra</td>
-			<td>Palestrante</td>
-			<td>instituicao</td>
-			<td>Certificado</td>
-			<td>Ação</td>
-			</tr>";
 		$msg .= "<tr>
 			<td>{$row['nome']}</td>
 			<td>{$row['data']}</td>
@@ -905,7 +951,6 @@ if( $_GET['acao'] == 'palestra' ){
 			<td><img width='25px' src='./certificados/{$row2['arquivo']}'</td>
 			<td><a href='index.php?acao=palestraEdit&id={$row['id']}'>Editar</a> <a href='index.php?acao=palestraApaga&id={$row['id']}'>Apagar</td> 
 			</tr>";
-		
 	}
 	$msg .= "</table>";
 	$acao = "msg";
@@ -929,8 +974,15 @@ if( $_GET['acao'] == 'palestra' ){
 
 
 if( $login ) {
-	if(isset($_GET['acao']) && $acao != 'msg' ) {
-		$acao = $_GET['acao'];
+	//var_dump($login, $acao);
+	if(isset($_GET['acao']) ) {
+		if (isset($acao)) {
+			if ($acao != 'msg') {
+				$acao = $_GET['acao'];
+			}
+		}else
+			$acao = $_GET['acao'];
+
 	} else {
 	       
 	        include("header.html");
@@ -978,6 +1030,7 @@ if( $login ) {
 	}
 } else {
 
+
 if(isset($_GET['acao']) ) {
 	$titulo = $_GET['acao'];
 	if($_GET['acao'] == 'novoUsuario'){
@@ -991,6 +1044,7 @@ if(isset($_GET['acao']) ) {
 		require_once('mysql.php');
 		$sql = "SELECT * FROM usuario WHERE email = '{$email}' AND senha = '{$senha}'";
 		$result = $conn->query($sql);
+		$ok = 0;
 		if ($result->num_rows >= 1){
 			$_SESSION['login'] = $email;
 			$ok = 1;
@@ -1055,7 +1109,7 @@ if(isset($_GET['acao']) ) {
 } 
 
 
-
+if(isset($acao))
 if( $acao=="msg" ){
 ?>
 <div class="div">
@@ -1066,7 +1120,7 @@ if( $acao=="msg" ){
 }
 
 
-
+if(isset($acao))
  if($acao=="") {
 
 ?>
@@ -1080,7 +1134,7 @@ if( $acao=="msg" ){
 	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body style="background:#333">
-	<form action="index.php?acao=<?php echo $nova_acao; ?>" method="post">
+	<form action="index.php?acao=<?php if(isset($nova_acao)) echo $nova_acao; ?>" method="post">
 		 <div class="container-fluid">
 			 <div class="row">
 				 <div class="col">
@@ -1089,7 +1143,7 @@ if( $acao=="msg" ){
 }
 
 
-
+if(isset($acao))
 if( $acao=="msg"  && false ){
 ?>
 <div class="div">
@@ -1100,7 +1154,10 @@ if( $acao=="msg"  && false ){
 }else if($acao=="" ){
 ?>
 <form action="index.php?acao=<?php echo $nova_acao; ?>" method="post">
-     	     		<?php echo $erro; ?>
+     	     		<?php 
+						if(isset($erro)) 
+							echo $erro 
+					?>
      	     	<label>Digite seu e-mail</label>
      	<input type="email" name="email" placeholder="E-mail"><br>
 
@@ -1124,7 +1181,7 @@ include("header2.html");
      <body style="background:#333">
      	<h2>FAÇA SEU CADASTRO    </h2>
      	
-	<?php echo $erro; ?> 
+	<?php if(isset($erro)) echo $erro; ?> 
 
           <label>Digite e-mail</label>
                          <input type="text" 
@@ -1189,7 +1246,7 @@ include("header2.html");
 
 
 	echo "<form>";
-	$target_dir = '/home/chr/proj/certificados/';
+	$target_dir = 'D:/wamp64/www/proj/certificados/';
 	$target_file = $target_dir . basename($_FILES["certificado"]["name"]);
 	$res=move_uploaded_file($_FILES["certificado"]["tmp_name"], $target_file);
 	//var_dump($res);

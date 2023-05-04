@@ -12,6 +12,8 @@
 
 namespace chillerlan\QRCode;
 
+use function array_values, count, in_array, is_array, is_numeric, max, min, sprintf, strtolower;
+
 trait QROptionsTrait{
 
 	/**
@@ -53,7 +55,7 @@ trait QROptionsTrait{
 	/**
 	 * Mask Pattern to use
 	 *
-	 *  [0...7] or QRCode::MASK_PATTERN_AUTO
+	 *   [0...7] or QRCode::MASK_PATTERN_AUTO
 	 *
 	 * @var int
 	 */
@@ -67,13 +69,23 @@ trait QROptionsTrait{
 	protected $addQuietzone = true;
 
 	/**
-	 *  Size of the quiet zone
+	 * Size of the quiet zone
 	 *
 	 *   internally clamped to [0 ... $moduleCount / 2], defaults to 4 modules
 	 *
 	 * @var int
 	 */
 	protected $quietzoneSize = 4;
+
+	/**
+	 * Use this to circumvent the data mode detection and force the usage of the given mode.
+	 * valid modes are: Number, AlphaNum, Kanji, Byte
+	 *
+	 * @see https://github.com/chillerlan/php-qrcode/issues/39
+	 *
+	 * @var string|null
+	 */
+	protected $dataMode = null;
 
 	/**
 	 * QRCode::OUTPUT_MARKUP_XXXX where XXXX = HTML, SVG
@@ -88,16 +100,16 @@ trait QROptionsTrait{
 	/**
 	 * the FQCN of the custom QROutputInterface if $outputType is set to QRCode::OUTPUT_CUSTOM
 	 *
-	 * @var string
+	 * @var string|null
 	 */
-	protected $outputInterface;
+	protected $outputInterface = null;
 
 	/**
 	 * /path/to/cache.file
 	 *
-	 * @var string
+	 * @var string|null
 	 */
-	protected $cachefile;
+	protected $cachefile = null;
 
 	/**
 	 * newline string [HTML, SVG, TEXT]
@@ -119,7 +131,7 @@ trait QROptionsTrait{
 	 *
 	 * @var string
 	 */
-	protected $cssClass;
+	protected $cssClass = '';
 
 	/**
 	 * SVG opacity
@@ -136,6 +148,17 @@ trait QROptionsTrait{
 	 * @var string
 	 */
 	protected $svgDefs = '<style>rect{shape-rendering:crispEdges}</style>';
+
+	/**
+	 * SVG viewBox size. a single integer number which defines width/height of the viewBox attribute.
+	 *
+	 * viewBox="0 0 x x"
+	 *
+	 * @see https://css-tricks.com/scale-svg/#article-header-id-3
+	 *
+	 * @var int|null
+	 */
+	protected $svgViewBoxSize = null;
 
 	/**
 	 * string substitute for dark
@@ -164,6 +187,22 @@ trait QROptionsTrait{
 	 * @var string
 	 */
 	protected $markupLight = '#fff';
+
+	/**
+	 * Return the image resource instead of a render if applicable.
+	 * This option overrides other output options, such as $cachefile and $imageBase64.
+	 *
+	 * Supported by the following modules:
+	 *
+	 * - QRImage:   resource
+	 * - QRImagick: Imagick
+	 * - QRFpdf:    FPDF
+	 *
+	 * @see \chillerlan\QRCode\Output\QROutputInterface::dump()
+	 *
+	 * @var bool
+	 */
+	protected $returnResource = false;
 
 	/**
 	 * toggle base64 or raw image data
@@ -214,9 +253,16 @@ trait QROptionsTrait{
 	 *
 	 * @see \ImagickPixel::__construct()
 	 *
-	 * @var string
+	 * @var string|null
 	 */
-	protected $imagickBG;
+	protected $imagickBG = null;
+
+	/**
+	 * Measurement unit for FPDF output: pt, mm, cm, in (defaults to "pt")
+	 *
+	 * @see \FPDF::__construct()
+	 */
+	protected $fpdfMeasureUnit = 'pt';
 
 	/**
 	 * Module values map
@@ -224,38 +270,9 @@ trait QROptionsTrait{
 	 *   HTML, IMAGICK: #ABCDEF, cssname, rgb(), rgba()...
 	 *   IMAGE: [63, 127, 255] // R, G, B
 	 *
-	 * @var array
+	 * @var array|null
 	 */
-	protected $moduleValues;
-
-	/**
-	 * set/clamp some special values, call the parent setter otherwise
-	 *
-	 * @param string $property
-	 * @param mixed  $value
-	 *
-	 * @return void
-	 */
-	public function __set(string $property, $value):void{
-
-		if(in_array($property, ['eccLevel', 'maskPattern', 'imageTransparencyBG', 'version'], true)){
-			$this->{'set_'.$property}($value);
-
-			return;
-		}
-		elseif($property === 'versionMin'){
-			$this->setMinMaxVersion($value, $this->versionMax);
-
-			return;
-		}
-		elseif($property === 'versionMax'){
-			$this->setMinMaxVersion($this->versionMin, $value);
-
-			return;
-		}
-
-		parent::__set($property, $value);
-	}
+	protected $moduleValues = null;
 
 	/**
 	 * clamp min/max version number
@@ -274,6 +291,30 @@ trait QROptionsTrait{
 	}
 
 	/**
+	 * sets the minimum version number
+	 *
+	 * @param int $version
+	 *
+	 * @return void
+	 */
+	protected function set_versionMin(int $version):void{
+		$this->setMinMaxVersion($version, $this->versionMax);
+	}
+
+	/**
+	 * sets the maximum version number
+	 *
+	 * @param int $version
+	 *
+	 * @return void
+	 */
+	protected function set_versionMax(int $version):void{
+		$this->setMinMaxVersion($this->versionMin, $version);
+	}
+
+	/**
+	 * sets the error correction level
+	 *
 	 * @param int $eccLevel
 	 *
 	 * @return void
@@ -282,13 +323,15 @@ trait QROptionsTrait{
 	protected function set_eccLevel(int $eccLevel):void{
 
 		if(!isset(QRCode::ECC_MODES[$eccLevel])){
-			throw new QRCodeException('Invalid error correct level: '.$eccLevel);
+			throw new QRCodeException(sprintf('Invalid error correct level: %s', $eccLevel));
 		}
 
 		$this->eccLevel = $eccLevel;
 	}
 
 	/**
+	 * sets/clamps the mask pattern
+	 *
 	 * @param int $maskPattern
 	 *
 	 * @return void
@@ -302,6 +345,8 @@ trait QROptionsTrait{
 	}
 
 	/**
+	 * sets the transparency background color
+	 *
 	 * @param mixed $imageTransparencyBG
 	 *
 	 * @return void
@@ -331,6 +376,8 @@ trait QROptionsTrait{
 	}
 
 	/**
+	 * sets/clamps the version number
+	 *
 	 * @param int $version
 	 *
 	 * @return void
@@ -341,6 +388,21 @@ trait QROptionsTrait{
 			$this->version = max(1, min(40, $version));
 		}
 
+	}
+
+	/**
+	 * sets the FPDF measurement unit
+	 *
+	 * @codeCoverageIgnore
+	 */
+	protected function set_fpdfMeasureUnit(string $unit):void{
+		$unit = strtolower($unit);
+
+		if(in_array($unit, ['cm', 'in', 'mm', 'pt'], true)){
+			$this->fpdfMeasureUnit = $unit;
+		}
+
+		// @todo throw or ignore silently?
 	}
 
 }

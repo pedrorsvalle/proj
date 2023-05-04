@@ -12,6 +12,8 @@
 
 namespace chillerlan\QRCode\Helpers;
 
+use function count, floor;
+
 class BitBuffer{
 
 	/**
@@ -43,7 +45,7 @@ class BitBuffer{
 	public function put(int $num, int $length):BitBuffer{
 
 		for($i = 0; $i < $length; $i++){
-			$this->putBit(($num >> ($length - $i - 1))&1 === 1);
+			$this->putBit((($num >> ($length - $i - 1)) & 1) === 1);
 		}
 
 		return $this;

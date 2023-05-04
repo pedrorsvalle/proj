@@ -8,11 +8,20 @@
  * @author       Smiley <smiley@chillerlan.net>
  * @copyright    2015 Smiley
  * @license      MIT
+ *
+ * @noinspection PhpComposerExtensionStubsInspection
  */
 
 namespace chillerlan\QRCode\Output;
 
-use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\Data\QRMatrix;
+use chillerlan\QRCode\{QRCode, QRCodeException};
+use chillerlan\Settings\SettingsContainerInterface;
+use Exception;
+
+use function array_values, base64_encode, call_user_func, count, imagecolorallocate, imagecolortransparent,
+	imagecreatetruecolor, imagedestroy, imagefilledrectangle, imagegif, imagejpeg, imagepng, in_array,
+	is_array, ob_end_clean, ob_get_contents, ob_start, range, sprintf;
 
 /**
  * Converts the matrix into GD images, raw or base64 output
@@ -29,7 +38,7 @@ class QRImage extends QROutputAbstract{
 	/**
 	 * @var string
 	 */
-	protected $defaultMode  = QRCode::OUTPUT_IMAGE_PNG;
+	protected $defaultMode = QRCode::OUTPUT_IMAGE_PNG;
 
 	/**
 	 * @see imagecreatetruecolor()
@@ -38,13 +47,21 @@ class QRImage extends QROutputAbstract{
 	protected $image;
 
 	/**
-	 * @see imagecolorallocate()
-	 * @var int
+	 * @inheritDoc
+	 *
+	 * @throws \chillerlan\QRCode\QRCodeException
 	 */
-	protected $background;
+	public function __construct(SettingsContainerInterface $options, QRMatrix $matrix){
+
+		if(!extension_loaded('gd')){
+			throw new QRCodeException('ext-gd not loaded'); // @codeCoverageIgnore
+		}
+
+		parent::__construct($options, $matrix);
+	}
 
 	/**
-	 * @return void
+	 * @inheritDoc
 	 */
 	protected function setModuleValues():void{
 
@@ -65,19 +82,23 @@ class QRImage extends QROutputAbstract{
 	}
 
 	/**
-	 * @param string|null $file
+	 * @inheritDoc
 	 *
-	 * @return string
+	 * @return string|resource
 	 */
-	public function dump(string $file = null):string{
-		$this->image      = imagecreatetruecolor($this->length, $this->length);
-		$this->background = imagecolorallocate($this->image, ...$this->options->imageTransparencyBG);
+	public function dump(string $file = null){
+		$this->image = imagecreatetruecolor($this->length, $this->length);
+
+		// avoid: Indirect modification of overloaded property $imageTransparencyBG has no effect
+		// https://stackoverflow.com/a/10455217
+		$tbg = $this->options->imageTransparencyBG;
+		$background  = imagecolorallocate($this->image, ...$tbg);
 
 		if((bool)$this->options->imageTransparent && in_array($this->options->outputType, $this::TRANSPARENCY_TYPES, true)){
-			imagecolortransparent($this->image, $this->background);
+			imagecolortransparent($this->image, $background);
 		}
 
-		imagefilledrectangle($this->image, 0, 0, $this->length, $this->length, $this->background);
+		imagefilledrectangle($this->image, 0, 0, $this->length, $this->length, $background);
 
 		foreach($this->matrix->matrix() as $y => $row){
 			foreach($row as $x => $M_TYPE){
@@ -85,10 +106,14 @@ class QRImage extends QROutputAbstract{
 			}
 		}
 
+		if($this->options->returnResource){
+			return $this->image;
+		}
+
 		$imageData = $this->dumpImage($file);
 
-		if((bool)$this->options->imageBase64){
-			$imageData = 'data:image/'.$this->options->outputType.';base64,'.base64_encode($imageData);
+		if($this->options->imageBase64){
+			$imageData = sprintf('data:image/%s;base64,%s', $this->options->outputType, base64_encode($imageData));
 		}
 
 		return $imageData;
@@ -129,7 +154,7 @@ class QRImage extends QROutputAbstract{
 		}
 		// not going to cover edge cases
 		// @codeCoverageIgnoreStart
-		catch(\Exception $e){
+		catch(Exception $e){
 			throw new QRCodeOutputException($e->getMessage());
 		}
 		// @codeCoverageIgnoreEnd

@@ -14,6 +14,8 @@ namespace chillerlan\QRCode\Data;
 
 use chillerlan\QRCode\QRCode;
 
+use function ord, sprintf, substr;
+
 /**
  * Numeric mode: decimal digits 0 through 9
  */
@@ -45,11 +47,9 @@ class Number extends QRDataAbstract{
 			if($this->strlen - $i === 1){
 				$this->bitBuffer->put($this->parseInt(substr($data, $i, $i + 1)), 4);
 			}
-			// @codeCoverageIgnoreStart
 			elseif($this->strlen - $i === 2){
 				$this->bitBuffer->put($this->parseInt(substr($data, $i, $i + 2)), 7);
 			}
-			// @codeCoverageIgnoreEnd
 
 		}
 
@@ -69,11 +69,10 @@ class Number extends QRDataAbstract{
 			$c = ord($string[$i]);
 
 			if(!in_array($string[$i], $this::NUMBER_CHAR_MAP, true)){
-				throw new QRCodeDataException('illegal char: "'.$string[$i].'" ['.$c.']');
+				throw new QRCodeDataException(sprintf('illegal char: "%s" [%d]', $string[$i], $c));
 			}
 
-			$c = $c - ord('0');
-
+			$c   = $c - 48; // ord('0')
 			$num = $num * 10 + $c;
 		}
 

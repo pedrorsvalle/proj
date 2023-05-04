@@ -23,6 +23,7 @@ use chillerlan\Settings\SettingsContainerAbstract;
  * @property bool   $addQuietzone
  * @property bool   $quietzoneSize
  *
+ * @property string $dataMode
  * @property string $outputType
  * @property string $outputInterface
  * @property string $cachefile
@@ -33,6 +34,7 @@ use chillerlan\Settings\SettingsContainerAbstract;
  * @property string $cssClass
  * @property string $svgOpacity
  * @property string $svgDefs
+ * @property int    $svgViewBoxSize
  *
  * @property string $textDark
  * @property string $textLight
@@ -40,6 +42,7 @@ use chillerlan\Settings\SettingsContainerAbstract;
  * @property string $markupDark
  * @property string $markupLight
  *
+ * @property bool   $returnResource
  * @property bool   $imageBase64
  * @property bool   $imageTransparent
  * @property array  $imageTransparencyBG
@@ -48,6 +51,8 @@ use chillerlan\Settings\SettingsContainerAbstract;
  *
  * @property string $imagickFormat
  * @property string $imagickBG
+ *
+ * @property string $fpdfMeasureUnit
  *
  * @property array  $moduleValues
  */

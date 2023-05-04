@@ -14,6 +14,8 @@ namespace chillerlan\QRCode\Output;
 
 use chillerlan\QRCode\QRCode;
 
+use function is_string, sprintf, strip_tags, trim;
+
 /**
  * Converts the matrix into markup types: HTML, SVG, ...
  */
@@ -25,7 +27,14 @@ class QRMarkup extends QROutputAbstract{
 	protected $defaultMode = QRCode::OUTPUT_MARKUP_SVG;
 
 	/**
-	 * @return void
+	 * @see \sprintf()
+	 *
+	 * @var string
+	 */
+	protected $svgHeader = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="qr-svg %1$s" style="width: 100%%; height: auto;" viewBox="0 0 %2$d %2$d">';
+
+	/**
+	 * @inheritDoc
 	 */
 	protected function setModuleValues():void{
 
@@ -49,7 +58,7 @@ class QRMarkup extends QROutputAbstract{
 	 * @return string
 	 */
 	protected function html():string{
-		$html = '';
+		$html = '<div class="'.$this->options->cssClass.'">'.$this->options->eol;
 
 		foreach($this->matrix->matrix() as $row){
 			$html .= '<div>';
@@ -60,6 +69,8 @@ class QRMarkup extends QROutputAbstract{
 
 			$html .= '</div>'.$this->options->eol;
 		}
+
+		$html .= '</div>'.$this->options->eol;
 
 		if($this->options->cachefile){
 			return '<!DOCTYPE html><head><meta charset="UTF-8"></head><body>'.$this->options->eol.$html.'</body>';
@@ -74,11 +85,9 @@ class QRMarkup extends QROutputAbstract{
 	 * @return string
 	 */
 	protected function svg():string{
-		$scale  = $this->options->scale;
-		$length = $this->moduleCount * $scale;
 		$matrix = $this->matrix->matrix();
 
-		$svg = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="'.$length.'px" height="'.$length.'px">'
+		$svg = sprintf($this->svgHeader, $this->options->cssClass, $this->options->svgViewBoxSize ?? $this->moduleCount)
 		       .$this->options->eol
 		       .'<defs>'.$this->options->svgDefs.'</defs>'
 		       .$this->options->eol;
@@ -97,17 +106,17 @@ class QRMarkup extends QROutputAbstract{
 						$count++;
 
 						if($start === null){
-							$start = $x * $scale;
+							$start = $x;
 						}
 
-						if($row[$x + 1] ?? false){
+						if(isset($row[$x + 1])){
 							continue;
 						}
 					}
 
 					if($count > 0){
-						$len = $count * $scale;
-						$path .= 'M' .$start. ' ' .($y * $scale). ' h'.$len.' v'.$scale.' h-'.$len.'Z ';
+						$len = $count;
+						$path .= sprintf('M%s %s h%s v1 h-%sZ ', $start, $y, $len, $len);
 
 						// reset count
 						$count = 0;
@@ -119,7 +128,7 @@ class QRMarkup extends QROutputAbstract{
 			}
 
 			if(!empty($path)){
-				$svg .= '<path class="qr-'.$M_TYPE.' '.$this->options->cssClass.'" stroke="transparent" fill="'.$value.'" fill-opacity="'.$this->options->svgOpacity.'" d="'.$path.'" />';
+				$svg .= sprintf('<path class="qr-%s %s" stroke="transparent" fill="%s" fill-opacity="%s" d="%s" />', $M_TYPE, $this->options->cssClass, $value, $this->options->svgOpacity, $path);
 			}
 
 		}
@@ -130,6 +139,10 @@ class QRMarkup extends QROutputAbstract{
 		// if saving to file, append the correct headers
 		if($this->options->cachefile){
 			return '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">'.$this->options->eol.$svg;
+		}
+
+		if($this->options->imageBase64){
+			$svg = sprintf('data:image/svg+xml;base64,%s', base64_encode($svg));
 		}
 
 		return $svg;
