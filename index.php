@@ -986,34 +986,44 @@ if( $login ) {
 	} else {
 	       
 	        include("header.html");
-	        echo "
 
-<nav class='navbar navbar-expand-sm bg-primary navbar-dark'>
-  <ul class='navbar-nav'>
-    <li class='nav-item active'>
-      <a class='nav-link' href='index.php?acao=cadastrarCertificado'>Cadastrar Certificado</a>
-    </li>
-    <li class='nav-item active'>
-      <a class='nav-link' href='index.php?acao=listaCertificado'>Lista Certificado</a>
-    </li>
-    <li class='nav-item active'>
-      <a class='nav-link' href='index.php?acao=palestra'>Palestra</a>
-    </li>
-    <li class='nav-item active'>
-      <a class='nav-link' href='index.php?acao=aluno'>Aluno</a>
-    </li>
-    <li class='nav-item active'>
-      <a class='nav-link' href='index.php?acao=certificadoAluno'>Certificado do aluno</a>
-    </li>
-    <li class='nav-item active'>
-      <a class='nav-link' href='index.php?acao=emitirCerificado' target='_blank'>Emitir Cerificado</a>
-    </li>
-    <li class='nav-item active'>
-      <a class='nav-link' href='index.php?acao=sair'>Sair</a>
-    </li>  </ul>
-</nav>	      
-	        
-	        ";
+	        echo "<nav class='navbar navbar-expand-sm bg-primary navbar-dark'>
+  					<ul class='navbar-nav'> ";
+			if ($_SESSION['role'] == 1) {
+			echo "		<li class='nav-item active'>
+							<a class='nav-link' href='index.php?acao=cadastrarCertificado'>Cadastrar Certificado</a>
+						</li>
+						<li class='nav-item active'>
+							<a class='nav-link' href='index.php?acao=listaCertificado'>Lista Certificado</a>
+						</li>
+						<li class='nav-item active'>
+							<a class='nav-link' href='index.php?acao=palestra'>Palestra</a>
+						</li>
+						<li class='nav-item active'>
+							<a class='nav-link' href='index.php?acao=aluno'>Aluno</a>
+						</li>
+						<li class='nav-item active'>
+							<a class='nav-link' href='index.php?acao=certificadoAluno'>Certificado do aluno</a>
+						</li>
+						<li class='nav-item active'>
+							<a class='nav-link' href='index.php?acao=emitirCerificado' target='_blank'>Emitir Cerificado</a>
+						</li>";
+			}
+			echo "		<li class='nav-item active'>
+							<a class='nav-link' href='index.php?acao=emitirCerificado' target='_blank'>Minhas Palestras</a>
+						</li>
+						<li class='nav-item active'>
+							<a class='nav-link' href='index.php?acao=emitirCerificado' target='_blank'>Meus Certificados</a>
+						</li>
+											";
+			echo "
+						<li class='nav-item active'>
+							<a class='nav-link' href='index.php?acao=sair'>Sair</a>
+						</li>  
+					</ul>
+				</nav>";
+
+
 	        /*
 		echo "<table><tr>
 		<td><a href='index.php?acao=cadastrarCertificado'>Cadastrar Certificado</a></td>
@@ -1044,9 +1054,12 @@ if(isset($_GET['acao']) ) {
 		require_once('mysql.php');
 		$sql = "SELECT * FROM usuario WHERE email = '{$email}' AND senha = '{$senha}'";
 		$result = $conn->query($sql);
+		$row = $result->fetch_assoc();
+
 		$ok = 0;
 		if ($result->num_rows >= 1){
 			$_SESSION['login'] = $email;
+			$_SESSION['role'] = $row['perfil_id'];
 			$ok = 1;
 		}
 		$conn->close();	
@@ -1086,10 +1099,22 @@ if(isset($_GET['acao']) ) {
 		} else {
 			$senha = md5($_POST['password']);
 			require_once('mysql.php');
+			//insere novo usuário (por padrão é perfil aluno)
 			$sql = "INSERT INTO usuario( email, nome, senha ) 
-				values ('{$_POST['email']}', '{$_POST['nome']}', '{$senha}' )
-			";
+				values ('{$_POST['email']}', '{$_POST['nome']}', '{$senha}' ) ";
+
 			if ($conn->query($sql) === TRUE) {
+				//insere aluno na tabela aluno
+				$sql2 = "INSERT INTO aluno( email, nome ) 
+				values ('{$_POST['email']}', '{$_POST['nome']}')";
+				$conn->query($sql2);
+
+				$sql2 = "update aluno a 
+				inner join usuario b on a.nome = b.nome and a.email = b.email
+				set a.usuario_id = b.id 
+				where b.perfil_id = 2 and a.usuario_id is null";
+				$conn->query($sql2);
+
 				$msg = "Usuário criado com sucesso clique <a href='index.php'>aqui para login</a>";
 			} else {
 				$msg = "problema para inserir usuário, clique <a href='index.php'>aqui</a> e tente novamente";
