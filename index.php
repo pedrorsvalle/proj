@@ -848,11 +848,11 @@ if( $_GET['acao'] == 'palestraNova' || $_GET['acao'] == 'palestraEdit'){
 		$certificado = '';
 		if( $result )
 			while($row = $result->fetch_assoc()) {
-				if($row['id'] == $_POST['certificado_id'])
-					$selected = " checked ";
-				else 
-					$selected = "";
-
+				$selected = "";
+				if (isset($_POST['certificado_id'])) 
+					if ($row['id'] == $_POST['certificado_id']) 
+						$selected = " checked ";
+				
 				$certificado .= "
 				<tr>
 					<td><input type='radio' id='{$row['id']}' name='certificado_id' value='{$row['id']}' " . $selected .  "></td>
