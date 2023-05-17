@@ -1530,9 +1530,10 @@ include("header2.html");
 <?php
 } else if( $acao == 'salvaCertificado' ) {
 
+	require_once('file.php');
 
 	echo "<form>";
-	$target_dir = 'D:/wamp64/www/proj/certificados/';
+	$target_dir = $filepath;
 	$target_file = $target_dir . basename($_FILES["certificado"]["name"]);
 	$res=move_uploaded_file($_FILES["certificado"]["tmp_name"], $target_file);
 	//var_dump($res);
