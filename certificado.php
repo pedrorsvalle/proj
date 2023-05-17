@@ -248,18 +248,27 @@ $font_path = './VelomiaVanora.ttf';
 // Set Text to Be Printed On Image
 $text = "This is a sunset!";
 
-//var_dump($_POST['nome_fonte'], 0, $_POST['nomex'], $_POST['nomey'], $white, $font_path, "Texto de nome");
-
 // Print Text On Image
 //imagettftext($jpg_image, $size, 0, 75, 300, $white, $font_path, $text);
 //imagettftext($jpg_image, $size, 0, $x, $y, $white, $font_path, $text);
 
-imagettftext($jpg_image, $_POST['nome_fonte'], 0, $_POST['nomex'], $_POST['nomey'], $white, $font_path, "Texto de nome");
-imagettftext($jpg_image, $_POST['data_fonte'], 0, $_POST['datax'], $_POST['datay'], $white, $font_path, "Texto de data");
-imagettftext($jpg_image, $_POST['curso_fonte'], 0, $_POST['cursox'], $_POST['cursoy'], $white, $font_path, "Texto do curso");
-imagettftext($jpg_image, $_POST['palestra_fonte'], 0, $_POST['palestrax'], $_POST['palestray'], $white, $font_path, "Texto da palestra");
-imagettftext($jpg_image, $_POST['palestrante_fonte'], 0, $_POST['palestrantex'], $_POST['palestrantey'], $white, $font_path, "Texto da palestrante");
-imagettftext($jpg_image, $_POST['instituicao_fonte'], 0, $_POST['instituicaox'], $_POST['instituicaoy'], $white, $font_path, "Texto da instituição");
+if($_POST['nome_fonte'] != '')
+	imagettftext($jpg_image, $_POST['nome_fonte'], 0, $_POST['nomex'], $_POST['nomey'], $white, $font_path, "Texto de nome");
+	
+if($_POST['data_fonte'] != '')
+	imagettftext($jpg_image, $_POST['data_fonte'], 0, $_POST['datax'], $_POST['datay'], $white, $font_path, "Texto de data");
+
+if($_POST['curso_fonte'] != '')
+	imagettftext($jpg_image, $_POST['curso_fonte'], 0, $_POST['cursox'], $_POST['cursoy'], $white, $font_path, "Texto do curso");
+
+if($_POST['palestra_fonte'] != '')
+	imagettftext($jpg_image, $_POST['palestra_fonte'], 0, $_POST['palestrax'], $_POST['palestray'], $white, $font_path, "Texto da palestra");
+
+if($_POST['palestrante_fonte'] != '')
+	imagettftext($jpg_image, $_POST['palestrante_fonte'], 0, $_POST['palestrantex'], $_POST['palestrantey'], $white, $font_path, "Texto da palestrante");
+
+if($_POST['instituicao_fonte'] != '')
+	imagettftext($jpg_image, $_POST['instituicao_fonte'], 0, $_POST['instituicaox'], $_POST['instituicaoy'], $white, $font_path, "Texto da instituição");
 
 
 // Send Image to Browser

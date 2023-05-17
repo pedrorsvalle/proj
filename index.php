@@ -31,7 +31,7 @@ if( $_GET['acao'] == 'sair' ){
 
 ////////////////////////////////
 if(!empty($_GET['acao']))
-if( $_GET['acao'] == 'emitirCerificado'){
+if( $_GET['acao'] == 'emitirCertificado'){
 	require_once('mysql.php');
 	$sql = " select * from palestra order by nome";
 	$result = $conn->query($sql);
@@ -40,7 +40,7 @@ if( $_GET['acao'] == 'emitirCerificado'){
 		$sql2 = "SELECT * FROM certificado where id= {$row['certificado_id']} ";
 		$result2 = $conn->query($sql2);
 		$row2 = $result2->fetch_assoc();
-		$palestra .= "<tr><td><a href='index.php?acao=emitirCerificadoAluno&id={$row['id']}'>{$row['nome']}</a></td><td><img width='25px' src='./certificados/{$row2['arquivo']}'</td></tr>";
+		$palestra .= "<tr><td><a href='index.php?acao=emitirCertificadoAluno&id={$row['id']}'>{$row['nome']}</a></td><td><img width='25px' src='./certificados/{$row2['arquivo']}'</td></tr>";
 	}
 	
 	
@@ -52,7 +52,9 @@ if( $_GET['acao'] == 'emitirCerificado'){
 		<div style='background:green'>
 	
 			<div class='alert alert-success' role='alert'>
-				  <?php echo $palestra; ?>
+				<a href='index.php'>Voltar</a>
+				<hr>
+				<?php echo $palestra; ?>
 			</div>
 
 		</div>
@@ -68,7 +70,68 @@ if( $_GET['acao'] == 'emitirCerificado'){
 }
 
 if(!empty($_GET['acao']))
-if( $_GET['acao'] == 'emitirCerificadoAluno'){
+if( $_GET['acao'] == 'meusCertificados'){
+
+	require_once('mysql.php');
+	$sql = 'SELECT ca.id as certificadoAlunoid, p.nome, p.certificado_id, p.data
+	FROM certificadoaluno ca
+		INNER JOIN aluno a ON ca.id_aluno = a.id
+		INNER JOIN usuario u ON a.usuario_id = u.id
+		INNER JOIN palestra p ON ca.id_palestra = p.id
+	WHERE u.email = "' . $_SESSION['login'] . '"
+		AND p.data < "' . date('Y-m-d', strtotime('-3 hours')) . '"';
+
+
+	//die($sql);
+	$result = $conn->query($sql);
+	if ($result) {
+		$palestra = "<table class='table table-bordered'>";
+		$palestra .=  "<tr>
+			<td>Data</td>
+			<td>Palestra</td>
+			<td></td>
+		</tr>";
+		$count=0;
+		while ($row = $result->fetch_assoc()) {
+			$count++;
+			$sql2 = "SELECT * FROM certificado where id= {$row['certificado_id']} ";
+			//die($sql2);
+			$result2 = $conn->query($sql2);
+			$row2 = $result2->fetch_assoc();
+			$palestra .= "<tr><td>". date('d/m/Y', strtotime($row['data'])) ."</td><td><a href='index.php?acao=prnCertificado&id={$row['certificadoAlunoid']}'>{$row['nome']}</a></td><td><img width='25px' src='./certificados/{$row2['arquivo']}'</td></tr>";
+		}
+		
+	} 
+	if($count == 0)
+		$palestra = '<p>Nenhum certificado disponível.</p>';
+	
+	include("header.html");
+	?>
+	
+	<div class='h-100 d-flex align-items-center justify-content-center'>
+		<div style='background:green'>
+	
+			<div class='alert alert-success' role='alert'>
+				<a href='index.php'>Voltar</a>
+				<hr>
+				<?php echo $palestra; ?>
+			</div>
+
+		</div>
+	</div>      
+	<?php
+	include("footer.html");		
+	
+	
+	die();
+//zzz
+}
+
+
+
+
+if(!empty($_GET['acao']))
+if( $_GET['acao'] == 'emitirCertificadoAluno'){
 
 	require_once('mysql.php');
 	$sql = " 
@@ -162,7 +225,7 @@ $text = "This is a sunset!";
 //imagettftext($jpg_image, $size, 0, 75, 300, $white, $font_path, $text);
 //imagettftext($jpg_image, $size, 0, $x, $y, $white, $font_path, $text);
 imagettftext($jpg_image, $row2['nome_fonte'], 0, $row2['nomex'], $row2['nomey'], $white, $font_path, $row['alunonome']);
-imagettftext($jpg_image, $row2['data_fonte'], 0, $row2['datax'], $row2['datay'], $white, $font_path, $row['data']);
+imagettftext($jpg_image, $row2['data_fonte'], 0, $row2['datax'], $row2['datay'], $white, $font_path, date('d/m/Y', strtotime($row['data'])));
 imagettftext($jpg_image, $row2['curso_fonte'], 0, $row2['cursox'], $row2['cursoy'], $white, $font_path, $row['curso']);
 imagettftext($jpg_image, $row2['palestra_fonte'], 0, $row2['palestrax'], $row2['palestray'], $white, $font_path, $row['palestra']);
 imagettftext($jpg_image, $row2['palestrante_fonte'], 0, $row2['palestrantex'], $row2['palestrantey'], $white, $font_path, $row['palestrante']);
@@ -431,11 +494,13 @@ if( $_GET['acao'] == 'certificadoAlunoNova' || $_GET['acao'] == 'certificadoAlun
 if(!empty($_GET['acao']))
 if( $_GET['acao'] == 'certificadoAluno' ){
 	require_once('mysql.php');
-	$sql = "SELECT certificadoAluno.id, id_aluno, id_palestra, aluno.nome as nomealuno, palestra.nome as nomepalestra  
+	$sql = "SELECT certificadoAluno.id, id_aluno, id_palestra, aluno.nome as nomealuno, palestra.nome as nomepalestra, 
+		palestra.curso, palestra.palestrante, palestra.data  
 	FROM certificadoAluno
 	LEFT JOIN aluno ON id_aluno = aluno.id
 	LEFT JOIN palestra on id_palestra = palestra.id 
-	order by aluno.nome";
+	ORDER BY palestra.data, aluno.nome";
+
 	//die($sql);
 	$result = $conn->query($sql);
 	$msg="<a href='index.php?acao=certificadoAlunoNova'>Novo certificado para aluno</a>&nbsp;&nbsp;&nbsp;&nbsp;";
@@ -443,16 +508,20 @@ if( $_GET['acao'] == 'certificadoAluno' ){
 	if( $result ) {
 	$msg.="<table class='table table-bordered'>";
 	$msg .=  "<tr>
-		<td>Nome</td>
-		<td>Palestra</td>
+			<td>Data</td>
+			<td>Palestra</td>
+			<td>Palestrante</td>
+			<td>Nome</td>
+			<td>Ação</td>
 		</tr>";
 	while($row = $result->fetch_assoc()) {
 		$msg .= "<tr>
-			<td>{$row['nomealuno']}</td>
+			<td>". date('d/m/Y', strtotime($row['data'])) ."</td>
 			<td>{$row['nomepalestra']}</td>
+			<td>{$row['palestrante']}</td>
+			<td>{$row['nomealuno']}</td>
 			<td><a href='index.php?acao=certificadoAlunoEdit&id={$row['id']}'>Editar</a> <a href='index.php?acao=certificadoAlunoApaga&id={$row['id']}'>Apagar</td>
-
-			</tr>";
+		</tr>";
 		
 	}
 	$msg .= "</table>";
@@ -1008,14 +1077,14 @@ if( $login ) {
 							<a class='nav-link' href='index.php?acao=certificadoAluno'>Certificado do aluno</a>
 						</li>
 						<li class='nav-item active'>
-							<a class='nav-link' href='index.php?acao=emitirCerificado' target='_blank'>Emitir Cerificado</a>
+							<a class='nav-link' href='index.php?acao=emitirCertificado' target='_blank'>Emitir Certificado</a>
 						</li>";
 			}
 			echo "		<li class='nav-item active'>
-							<a class='nav-link' href='index.php?acao=emitirCerificado' target='_blank'>Minhas Palestras</a>
+							<a class='nav-link' href='index.php?acao=minhasPalestras' target='_blank'>Minhas Palestras</a>
 						</li>
 						<li class='nav-item active'>
-							<a class='nav-link' href='index.php?acao=emitirCerificado' target='_blank'>Meus Certificados</a>
+							<a class='nav-link' href='index.php?acao=meusCertificados' target='_blank'>Meus Certificados</a>
 						</li>
 											";
 			echo "
@@ -1254,10 +1323,11 @@ include("header2.html");
 		<div class='h-100 d-flex align-items-center justify-content-center'>
 			<div style='background:lightblue'>
 		
-	<form action='index.php?acao=salvaCertificado' method='post' enctype='multipart/form-data'>
-	<input type='file' name='certificado'><br>
-	<input type='submit' name='Upload' value='Upload'>
-	
+			<form action='index.php?acao=salvaCertificado' method='post' enctype='multipart/form-data'>
+				<input type='file' name='certificado'><br>
+				<input type='submit' name='Upload' value='Upload'>
+			</form>
+			<a href='/index.php'>Voltar</a>
 			</div>
 		</div>      ";
 	include("footer_msg.html");
@@ -1320,7 +1390,6 @@ print "</pre>";
 
 */
 } else if( $acao == 'listaCertificado' ) {
-	echo "<form>";
 	require_once('mysql.php');
 	include("header_msg.html");
 	$sql = "SELECT * FROM certificado";
@@ -1334,9 +1403,13 @@ print "</pre>";
 	
 	
 	$result = $conn->query($sql);
+	echo "<form>";
+
 	while($row = $result->fetch_assoc()) {
 		echo "<a href='certificado.php?certificado={$row['id']}&ler=1'><img width='100px' src='./certificados/{$row['arquivo']}' border=1></a>";
 	}
+	echo "</form>";
+	echo "<a href='/index.php'>Voltar</a>";
 	echo "
 						
 						</div>
@@ -1344,7 +1417,6 @@ print "</pre>";
 					</div>
 				</div>      ";	
 
-	echo "</form>";
 	include("footer_msg.html");
 
 } else if( $acao == 'mapearCertificado' ) {
