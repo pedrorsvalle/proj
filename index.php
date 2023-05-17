@@ -70,6 +70,186 @@ if( $_GET['acao'] == 'emitirCertificado'){
 }
 
 if(!empty($_GET['acao']))
+if( $_GET['acao'] == 'minhasPalestras' ){
+	require_once('mysql.php');
+	$sql = 'SELECT ca.id as certificadoAlunoid, p.nome as palestra, p.certificado_id, p.data, p.palestrante
+	FROM certificadoaluno ca
+		INNER JOIN aluno a ON ca.id_aluno = a.id
+		INNER JOIN usuario u ON a.usuario_id = u.id
+		INNER JOIN palestra p ON ca.id_palestra = p.id
+	WHERE u.email = "' . $_SESSION['login'] . '"
+		AND p.data >= "' . date('Y-m-d', strtotime('-3 hours')) . '"
+	ORDER BY p.data';
+
+	$result = $conn->query($sql);
+	$msg="<a href='index.php?acao=palestraInscricao'>Inscrição</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+	$msg.="<a href='index.php'>Voltar</a>";
+	$msg.= "<hr>";
+	$msg.="<table class='table table-bordered' >";
+	$msg .=  "<tr>
+		<td>Data</td>
+		<td>Palestra</td>
+		<td>Palestrante</td>
+		<td>Ação</td>
+		</tr>";
+	while($row = $result->fetch_assoc()) {
+		$msg .= "<tr>
+			<td>" . date('d/m/Y', strtotime($row['data'])) ."</td>
+			<td>{$row['palestra']}</td>
+			<td>{$row['palestrante']}</td>
+			<td> <a href='index.php?acao=palestraAlunoCancelar&id={$row['certificadoAlunoid']}'>Cancelar</td> 
+			</tr>";
+	}
+	$msg .= "</table>";
+	$acao = "msg";
+	include("header.html");
+	?>
+	
+	<div class='h-100 d-flex align-items-center justify-content-center'>
+		<div style='background:green'>
+	
+			<div class='alert alert-success' role='alert'>
+				  <?php echo $msg; ?>
+			</div>
+
+		</div>
+	</div>      
+	<?php
+	include("footer.html");
+	die();
+}
+
+if(!empty($_GET['acao']))
+if ($_GET['acao'] == 'palestraInscricao') {
+    require_once('mysql.php');
+
+
+    $sql = "SELECT * FROM palestra 
+		WHERE data >= '" . date('Y-m-d', strtotime('-3 hours')) . "'
+		 AND id not in (SELECT id_palestra FROM certificadoaluno WHERE id_aluno = " . $_SESSION['aluno_id'] . ") 
+		ORDER BY data, nome";
+    $result = $conn->query($sql);
+    $palestra = '';
+    $palestra_count = 0;
+    while ($row = $result->fetch_assoc()) {
+        $palestra_count++;
+        $palestra .= "<option value='{$row['id']}'>{$row['nome']} - " . date('d/m/Y', strtotime($row['data'])) . "</option>";
+    }
+
+    if (isset($_POST['OK'])) {
+        $sql = "INSERT INTO certificadoAluno (id_aluno, id_palestra ) VALUES ({$_SESSION['aluno_id']}, {$_POST['palestra']})";
+        $result = $conn->query($sql);
+        //die($sql);
+        if ($result == true) {
+            include("header.html");
+            ?>
+			
+				<div class='h-100 d-flex align-items-center justify-content-center'>
+					<div style='background:green'>
+				
+						<div class='alert alert-success' role='alert'>
+							Inscrição realizada com sucesso, para prosseguir clique <a href='index.php?acao=minhasPalestras'>aqui</a>
+						</div>
+
+					</div>
+				</div>      
+				<?php
+                include("footer.html");
+            die();
+        } else {
+            $msg = "Erro ao inserir dados inseridos clique <a href='index.php?acao=certificadoAluno'>aqui</a>";
+            $msg .= "Error: " . $sql . "<br>" . $conn->error;
+            $acao = "msg";
+        }
+    }
+    ?>
+
+	<?php
+        include("header.html");
+    ?>
+	
+	<div class='h-100 d-flex align-items-center justify-content-center'>
+		<div style='background:green'>
+	
+			<div class='alert alert-success' role='alert'>
+				<a href='index.php?acao=minhasPalestras'>Voltar</a>
+				<hr>
+				<?php if ($palestra_count > 0) { ?>
+				<form method="post" action="index.php?acao=<?php echo $_GET['acao'] ?>">
+				<input type="hidden" name="id" value="<?php echo $_POST['id'] ?? '' ?>">
+				<table class='table table-bordered'>
+					<tr>
+						<td>Palestra</td>
+						<td>  <select name='palestra'> <?php echo $palestra; ?> </select> </td>
+						<td><?php echo $palestra_erro ?? '' ?></td>
+					</tr>
+					<tr>
+						<td><input type="submit" name="OK" value="OK"></td>
+					</tr>
+				</table>
+				<?php } else { ?>
+				<p>Nenhuma palestra disponível no momento.</p>
+				<?php } ?>
+			</div>
+
+		</div>
+	</div>      
+
+	<?php
+		include("footer.html");		
+	die();			
+
+
+
+}
+
+
+
+if(!empty($_GET['acao']))
+if( $_GET['acao'] == 'palestraAlunoCancelar'){
+		
+		$sql = "DELETE FROM certificadoAluno where id= {$_GET['id']}  ";
+		require_once('mysql.php');
+		$result = $conn->query($sql);
+		
+		if ($result == TRUE){
+		
+		
+		include("header.html");
+		?>
+		
+		<div class='h-100 d-flex align-items-center justify-content-center'>
+			<div style='background:green'>
+		
+				<div class='alert alert-success' role='alert'>
+					  Palestra cancelada com sucesso, para prosseguir clique <a href='index.php?acao=minhasPalestras'>aqui</a>
+				</div>
+
+			</div>
+		</div>      
+		<?php
+		include("footer.html");		
+		die();	
+		
+		} else {
+			$msg = "Erro ao cancelar a palestra, clique <a href='index.php?acao=minhasPalestras'>aqui</a>";
+			$msg .= "Error: " . $sql . "<br>" . $conn->error;
+			$acao = "msg";
+		}
+
+		
+	?>
+	<div class="div">
+	<?php echo $msg; ?>
+	</div>
+	</div>
+	<?php
+	die();
+
+}
+
+
+if(!empty($_GET['acao']))
 if( $_GET['acao'] == 'meusCertificados'){
 
 	require_once('mysql.php');
@@ -503,7 +683,7 @@ if( $_GET['acao'] == 'certificadoAluno' ){
 
 	//die($sql);
 	$result = $conn->query($sql);
-	$msg="<a href='index.php?acao=certificadoAlunoNova'>Novo certificado para aluno</a>&nbsp;&nbsp;&nbsp;&nbsp;";
+	$msg="<a href='index.php?acao=certificadoAlunoNova'>Novo Certificado para Aluno</a>&nbsp;&nbsp;&nbsp;&nbsp;";
 	$msg.="<a href='index.php'>Voltar</a>";
 	if( $result ) {
 	$msg.="<table class='table table-bordered'>";
@@ -1000,9 +1180,9 @@ if( $_GET['acao'] == 'palestra' ){
 	$msg.="<table class='table table-bordered' >";
 	$msg .=  "<tr>
 		<td>Nome</td>
-		<td>data</td>
-		<td>curso</td>
-		<td>palestra</td>
+		<td>Data</td>
+		<td>Curso</td>
+		<td>Palestra</td>
 		<td>Palestrante</td>
 		<td>instituicao</td>
 		<td>Certificado</td>
@@ -1014,7 +1194,7 @@ if( $_GET['acao'] == 'palestra' ){
 		$row2 = $result2->fetch_assoc();
 		$msg .= "<tr>
 			<td>{$row['nome']}</td>
-			<td>{$row['data']}</td>
+			<td>" . date('d/m/Y', strtotime($row['data'])) ."</td>
 			<td>{$row['curso']}</td>
 			<td>{$row['palestra']}</td>
 			<td>{$row['palestrante']}</td>
@@ -1132,6 +1312,15 @@ if(isset($_GET['acao']) ) {
 			$_SESSION['login'] = $email;
 			$_SESSION['role'] = $row['perfil_id'];
 			$ok = 1;
+
+			$sql = "SELECT * FROM aluno WHERE usuario_id = {$row['id']}";
+			$result = $conn->query($sql);
+			$row2 = $result->fetch_assoc();
+			if($result->num_rows >=1)
+				$_SESSION['aluno_id'] = $row2['id'];
+			else
+				$_SESSION['aluno_id'] = null;
+		
 		}
 		$conn->close();	
 	
