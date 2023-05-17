@@ -130,6 +130,7 @@ if( $_GET['acao'] == 'prnCertificado'){
 	";
 	//die($sql);
 	$result = $conn->query($sql);
+	
 	if( $result )
 	$row = $result->fetch_assoc();
 	$sql2 = "SELECT * FROM certificado where id= {$row['certificado_id']} ";
@@ -188,7 +189,7 @@ $data = 'otpauth://totp/test?secret=B3JX4VCVJDVNXNZ5&issuer=chillerlan.net';
 QRcode::png($data, 'out.png');
 */
 
-include '/phpqrcode/qrlib.php';
+include 'phpqrcode/qrlib.php';
 $text = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
 $text.= "?acao=prnCertificado&id= id= {$_GET['id']}";
 //echo $text;  
@@ -289,8 +290,7 @@ if( $_GET['acao'] == 'certificadoAlunoNova' || $_GET['acao'] == 'certificadoAlun
 		$_POST['id']=$row['id'];
 	}
 
-	
-	if( $_POST['OK'] ) {
+	if( isset($_POST['OK']) ) {
 		$form = 1;
 		$erro=0;
 		if( !$_POST['aluno'] ) { $nome_erro = "o aluno estar vazio"; $erro = 1; }
@@ -303,7 +303,7 @@ if( $_GET['acao'] == 'certificadoAlunoNova' || $_GET['acao'] == 'certificadoAlun
 					email='{$_POST['email']}'
 				where id = {$_POST['id']}";
 			} else {
-				$sql = "INSERT INTO certificadoAluno (id_aluno, id_palestra ) VALUES ({$_POST['aluno']},{$_POST['palestra']})";
+				$sql = "INSERT INTO certificadoAluno (id_aluno, id_palestra ) VALUES ({$_POST['aluno']}, {$_POST['palestra']})";
 			}
 		require_once('mysql.php');		
 		$result = $conn->query($sql);
@@ -384,6 +384,7 @@ if( $_GET['acao'] == 'certificadoAlunoNova' || $_GET['acao'] == 'certificadoAlun
 	require_once('mysql.php');
 	$sql = " select * from aluno order by nome";
 
+	$aluno = '';
 	$result = $conn->query($sql);
 	while($row = $result->fetch_assoc()) {
 		$aluno .= "<option value='{$row['id']}'>{$row['nome']}</option>";
@@ -391,8 +392,9 @@ if( $_GET['acao'] == 'certificadoAlunoNova' || $_GET['acao'] == 'certificadoAlun
 
 	$sql = " select * from palestra order by nome";
 	$result = $conn->query($sql);
+	$palestra = '';
 	while($row = $result->fetch_assoc()) {
-		$palestra .= "<option value='{$row['id']}'>{$row['nome']}</option>";
+		$palestra .= "<option value='{$row['id']}'>{$row['nome']} - " . date('d/m/Y', strtotime($row['data'])) . "</option>";
 	}
 
 ?>
@@ -410,9 +412,9 @@ if( $_GET['acao'] == 'certificadoAlunoNova' || $_GET['acao'] == 'certificadoAlun
 				<div class='alert alert-success' role='alert'>
 					<form method="post" action="index.php?acao=<?php echo $_GET['acao'] ?>">
 					<table class='table table-bordered'>
-					<tr><td>Nome </td><td>  <select name='aluno'> <?php echo $aluno; ?> </select> </td><td><?php echo $aluno_erro ?></td></tr>
-					<tr><td>Palestra</td><td>  <select name='palestra'> <?php echo $palestra; ?> </select> </td><td><?php echo $palestra_erro ?></td></tr>
-					<input type="hidden" name="id" value="<?php echo $_POST['id'] ?>">
+					<tr><td>Nome </td><td>  <select name='aluno'> <?php echo $aluno; ?> </select> </td><td><?php echo $aluno_erro ?? '' ?></td></tr>
+					<tr><td>Palestra</td><td>  <select name='palestra'> <?php echo $palestra; ?> </select> </td><td><?php echo $palestra_erro ?? '' ?></td></tr>
+					<input type="hidden" name="id" value="<?php echo $_POST['id'] ?? '' ?>">
 					<tr><td><input type="submit" name="OK" value="OK"></td></tr>
 				</div>
 

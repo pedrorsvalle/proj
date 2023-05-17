@@ -69,6 +69,7 @@ if(isset($_POST['Salvar']))
 		
 	}
 
+if(isset($_GET['ler']))
 if( $_GET['ler'] == 1 ) {
 	if( $_GET['certificado'] ) {
 		require_once('mysql.php');
@@ -77,7 +78,6 @@ if( $_GET['ler'] == 1 ) {
 		$result = $conn->query($sql);
 		$row = $result->fetch_assoc();
 	
-		
 		$_POST['arquivo'] = $row['arquivo'];
 		
 		$_POST['nome_fonte'] = $row['nome_fonte'];
@@ -105,6 +105,8 @@ if( $_GET['ler'] == 1 ) {
 		$_POST['instituicaoy'] = $row['instituicaoy'];		
 	}
 }
+
+
 
 if (isset($_POST['texto'])) {
     if ($_POST['texto'] == 'nome') {
@@ -167,6 +169,8 @@ if (isset($_POST['texto'])) {
         $_POST['instituicaox'] = $instituicaox;
         $_POST['instituicaoy'] = $instituicaoy;
     }
+
+
 }
 ?>
 
@@ -193,7 +197,8 @@ if (isset($_POST['texto'])) {
 	<input type="submit" name="Salvar" value="Salvar"><br>
 
 
-	<input type="image" src="<?php echo '/certificados/'.$_POST['arquivo']; ?>">
+<!--	<input type="image" src="<?php echo '/certificados/'.$_POST['arquivo']; ?>"> --> 
+	<input type="image" src="<?php echo 'out.jpg'; ?>">
 
 
 	<input type="hidden" name="nomex" value="<?php echo $_POST['nomex'];?>">
@@ -234,7 +239,7 @@ $jpg_image = imagecreatefromjpeg('certificados/'.$_POST['arquivo']);
 
 // Allocate A Color For The Text
 #$white = imagecolorallocate($jpg_image, 255, 255, 255);
-$white = imagecolorallocate($jpg_image, 255, 0, 0);
+$white = imagecolorallocate($jpg_image, 255, 50, 0);
 
 // Set Path to Font File
 #$font_path = './VelomiaVanora.ttf';
@@ -243,9 +248,12 @@ $font_path = './VelomiaVanora.ttf';
 // Set Text to Be Printed On Image
 $text = "This is a sunset!";
 
+//var_dump($_POST['nome_fonte'], 0, $_POST['nomex'], $_POST['nomey'], $white, $font_path, "Texto de nome");
+
 // Print Text On Image
 //imagettftext($jpg_image, $size, 0, 75, 300, $white, $font_path, $text);
 //imagettftext($jpg_image, $size, 0, $x, $y, $white, $font_path, $text);
+
 imagettftext($jpg_image, $_POST['nome_fonte'], 0, $_POST['nomex'], $_POST['nomey'], $white, $font_path, "Texto de nome");
 imagettftext($jpg_image, $_POST['data_fonte'], 0, $_POST['datax'], $_POST['datay'], $white, $font_path, "Texto de data");
 imagettftext($jpg_image, $_POST['curso_fonte'], 0, $_POST['cursox'], $_POST['cursoy'], $white, $font_path, "Texto do curso");
