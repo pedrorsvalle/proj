@@ -1240,7 +1240,7 @@ if( $login ) {
     <li class='nav-item active'>
       <a class='nav-link' href='index.php?acao=pdfCerificado' target='_blank'>PDF Cerificado</a>
      </li>";
-}
+
 echo "		<li class='nav-item active'>
 				<a class='nav-link' href='index.php?acao=minhasPalestras' target='_blank'>Minhas Palestras</a>
 			</li>
