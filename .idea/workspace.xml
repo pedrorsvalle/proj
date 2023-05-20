@@ -5,7 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6bb5eb60-46e2-4407-bff7-8850403bff49" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Certificado2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Certificado3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ModeloCertificado.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SAVE.JPG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/certificadosModeloCertificado.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/composer.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/teste.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/teste01.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/teste01.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/teste02.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/composer/installed.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/installed.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -14,7 +24,9 @@
   </component>
   <component name="ComposerSettings" synchronizationState="SYNCHRONIZE">
     <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
-    <execution />
+    <execution>
+      <executable path="composer" />
+    </execution>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -51,6 +63,7 @@
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
+    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -62,7 +75,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1684524305691</updated>
-      <workItem from="1684524306784" duration="936000" />
+      <workItem from="1684524306784" duration="1539000" />
     </task>
     <servers />
   </component>
