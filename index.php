@@ -1549,17 +1549,17 @@ if( $login ) {
 							<a class='nav-link' href='index.php?acao=certificadoAluno'>Certificado do aluno</a>
 						</li>
 						<li class='nav-item active'>
-							<a class='nav-link' href='index.php?acao=verCertificado' target='_blank'>Ver Certificados</a>
+							<a class='nav-link' href='index.php?acao=verCertificado' >Ver Certificados</a>
 						</li>
 						<li class='nav-item active'>
-						<a class='nav-link' href='index.php?acao=pdfCertificado' target='_blank'>Emitir Certificados(PDF)</a>
+						<a class='nav-link' href='index.php?acao=pdfCertificado' >Emitir Certificados(PDF)</a>
 					   </li>";
 			}
 			echo "		<li class='nav-item active'>
-							<a class='nav-link' href='index.php?acao=minhasPalestras' target='_blank'>Minhas Palestras</a>
+							<a class='nav-link' href='index.php?acao=minhasPalestras' >Minhas Palestras</a>
 						</li>
 						<li class='nav-item active'>
-							<a class='nav-link' href='index.php?acao=meusCertificados' target='_blank'>Meus Certificados</a>
+							<a class='nav-link' href='index.php?acao=meusCertificados' >Meus Certificados</a>
 						</li>
 											";
 			echo "
