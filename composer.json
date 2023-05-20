@@ -1,5 +1,6 @@
 {
     "require": {
-        "chillerlan/php-qrcode": "^3.0"
+      "chillerlan/php-qrcode": "^3.0",
+      "ext-mysqli": "*"
     }
 }
