@@ -1609,29 +1609,36 @@ if( $_GET['acao'] == 'palestraNova' || $_GET['acao'] == 'palestraEdit'){
 		$sql = "SELECT * FROM curso ORDER BY palestra";
 		$result = $conn->query($sql);
 		$palestra = '';
+		$palestra_count = 0;
 		if( $result )
 			while($row2 = $result->fetch_assoc()) {
 				$selected = "";
+				$palestra_count += 1;
 				if (isset($_POST['curso_id'])) 
 					if ($row2['id'] == $_POST['curso_id']) 
 						$selected = " selected ";
 				
 				$palestra .= " <option value='{$row2['id']}' " . $selected .  ">{$row2['palestra']} - {$row2['curso']} </option>";
 			}
-	
+		if($palestra_count == 0)
+			$palestra .= " <option value='' >NENHUM CURSO CADASTRADO </option>";
 			
 		$sql = "SELECT * FROM instituicao ORDER BY instituicao";
 		$result = $conn->query($sql);
 		$instituicao = '';
+		$instituicao_count = 0;
 		if( $result )
 			while($row3 = $result->fetch_assoc()) {
 				$selected = "";
+				$instituicao_count += 1;
 				if (isset($_POST['instituicao_id'])) 
 					if ($row3['id'] == $_POST['instituicao_id']) 
 						$selected = " selected ";
 				
 				$instituicao .= " <option value='{$row3['id']}' " . $selected .  ">{$row3['instituicao']} </option>";
 			}
+		if($instituicao_count == 0)
+			$instituicao .= " <option value='' >NENHUMA INSTITUIÇÃO CADASTRADA </option>";
 
 		include("header.html");
 		?>
@@ -1641,56 +1648,59 @@ if( $_GET['acao'] == 'palestraNova' || $_GET['acao'] == 'palestraEdit'){
 				<div class='alert alert-success' role='alert'>
 
 					<form method="post" action="index.php?acao=<?php echo $_GET['acao'] ?>">
-					<table class='table table-bordered'>
-						<tr>
-							<td>Nome</td>
-							<td><input type="text" name="nome" value="<?php echo $_POST['nome'] ?? '' ?>" required><td><?php echo $nome_erro ?? '' ?></td>
-						</tr>
-						<tr>
-							<td>Data</td>
-							<td><input type="date" name="data" value="<?php echo $_POST['data'] ?? '' ?>" required><?php echo $data_erro ?? '' ?></td>
-						</tr>
-						<!-- <tr>
-							<td>Curso</td>
-							<td><input type="text" name="curso" value="<?php echo $_POST['curso'] ?? '' ?>"><?php echo $curso_erro ?? '' ?></td>
-						</tr> -->
-						<tr>
-							<td>Instituição</td>
-							<td>
-								<select name="instituicao_id" required>
-									<?php echo $instituicao ?>
-								</select>
-							</td>
-						</tr>
-						<tr>						
-							<td>Palestra/Curso</td>
-							<td>
-								<select name="curso_id" required>
-									<?php echo $palestra ?>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<td>Palestrante</td>
-							<td><input type="text" name="palestrante" value="<?php echo $_POST['palestrante'] ?? '' ?>" required><?php echo $palestrante_erro ?? '' ?></td>
-						</tr>
-						<!-- <tr>
-							<td>Instituição</td>
-							<td><input type="text" name="instituicao" value="<?php echo $_POST['instituicao'] ?? '' ?>"><?php echo $instituicao_erro ?? '' ?></td>
-						</tr> -->
-						<tr>
-							<td>Certificado</td>
-							<td>
-								<table>
-									<?php echo $certificado; ?>
-								</table>
-								<?php echo $certificado_erro ?? '' ?>
-							</td>
-						</tr>
-					</table>
-					<input type="hidden" name="id" value="<?php echo $_GET['id'] ?? '' ?>">
-					<input type="submit" name="OK" value="OK" class="btn btn-sm btn-secondary">
-					<a href='index.php?acao=palestra' class="btn btn-sm btn-secondary ml-2">Voltar</a>
+						<table class='table table-bordered'>
+							<tr>
+								<td>Nome</td>
+								<td><input type="text" name="nome" value="<?php echo $_POST['nome'] ?? '' ?>" required><td><?php echo $nome_erro ?? '' ?></td>
+							</tr>
+							<tr>
+								<td>Data</td>
+								<td><input type="date" name="data" value="<?php echo $_POST['data'] ?? '' ?>" required><?php echo $data_erro ?? '' ?></td>
+							</tr>
+							<!-- <tr>
+								<td>Curso</td>
+								<td><input type="text" name="curso" value="<?php echo $_POST['curso'] ?? '' ?>"><?php echo $curso_erro ?? '' ?></td>
+							</tr> -->
+							<tr>
+								<td>Instituição</td>
+								<td>
+									<select name="instituicao_id" required>
+										<?php echo $instituicao ?>
+									</select>
+								</td>
+							</tr>
+							<tr>						
+								<td>Palestra/Curso</td>
+								<td>
+									<select name="curso_id" required>
+										<?php echo $palestra ?>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td>Palestrante</td>
+								<td><input type="text" name="palestrante" value="<?php echo $_POST['palestrante'] ?? '' ?>" required><?php echo $palestrante_erro ?? '' ?></td>
+							</tr>
+							<!-- <tr>
+								<td>Instituição</td>
+								<td><input type="text" name="instituicao" value="<?php echo $_POST['instituicao'] ?? '' ?>"><?php echo $instituicao_erro ?? '' ?></td>
+							</tr> -->
+							<tr>
+								<td>Certificado</td>
+								<td>
+									<table>
+										<?php echo $certificado; ?>
+									</table>
+									<?php echo $certificado_erro ?? '' ?>
+								</td>
+							</tr>
+						</table>
+						<input type="hidden" name="id" value="<?php echo $_GET['id'] ?? '' ?>">
+						<?php if($palestra_count > 0 || $instituicao_count > 0){ ?>
+							<input type="submit" name="OK" value="OK" class="btn btn-sm btn-secondary">
+						<?php } ?>
+						<a href='index.php?acao=palestra' class="btn btn-sm btn-secondary ml-2">Voltar</a>
+					</form>
 				</div>
 			</div>
 		</div> 
@@ -1717,6 +1727,7 @@ if( $_GET['acao'] == 'palestra' ){
 	$result = $conn->query($sql);
 
 	$msg ="<a href='index.php?acao=palestraNova'>Nova Palestra</a> &nbsp; &nbsp; ";
+
 	$msg .="<a href='index.php?acao=instituicao'>Instituição</a> &nbsp; &nbsp; ";
 	$msg .="<a href='index.php?acao=curso'>Curso</a> &nbsp; &nbsp; ";
 	$msg .="<a href='index.php'>Voltar</a>";
@@ -2442,13 +2453,13 @@ include("header2.html");
 	include("header_msg.html");
 	echo "
 		<div class='h-100 d-flex align-items-center justify-content-center'>
-			<div style='background:lightblue'>
+			<div >
 		
-			<form action='index.php?acao=salvaCertificado' method='post' enctype='multipart/form-data'>
-				<input type='file' name='certificado'><br>
-				<input type='submit' name='Upload' value='Upload'>
-			</form>
-			<a href='/index.php'>Voltar</a>
+				<form action='index.php?acao=salvaCertificado' method='post' enctype='multipart/form-data'>
+					<input class='form-control form-control-sm' name='certificado' id='formFileSm' type='file'>
+					<input type='submit' name='Upload' class='btn btn-sm btn-secondary mt-1' value='Upload'>
+					<a href='/index.php' class='btn btn-sm btn-secondary mt-1'>Voltar</a>
+				</form>
 			</div>
 		</div>      ";
 	include("footer_msg.html");
