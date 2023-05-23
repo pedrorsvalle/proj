@@ -52,16 +52,14 @@ if(isset($_POST['Salvar']))
 					<div style='background:green'>
 				
 						<div class='alert alert-success' role='alert'>
-							Dado Atualizado com sucesso voltar ao <a href='index.php'>index</a>
+							Dado Atualizado com sucesso, clique <a href='index.php'>aqui</a> para continuar. 
 						</div>
 			
 					</div>
 				</div>      ";
 			include("footer_msg.html");
 			die();
-		
-			echo "Dado Atualizado com sucesso voltar ao <a href='index.php'>index</a>";
-			die();
+
 		} else {
 			echo "Error updating record: " . $conn->error;
 			die();
