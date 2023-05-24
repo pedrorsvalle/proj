@@ -1168,6 +1168,7 @@ if( $_GET['acao'] == 'certificadoAluno' ){
 	$msg .=  "<tr>
 			<td>Data</td>
 			<td>Instituição</td>
+			<td>Curso</td>
 			<td>Palestra</td>
 			<td>Palestrante</td>
 			<td>Nome</td>
@@ -1183,14 +1184,14 @@ if( $_GET['acao'] == 'certificadoAluno' ){
 			<td>{$row['palestrante']}</td>
 			<td>{$row['aluno']}</td>
 			<td>";
-		if($row['status'] == 1)
-			$msg .= 'Pendente';
-		else
-			$msg .= 'Publicado';
-		$msg .= "</td>
+			if($row['status'] == 1)
+				$msg .= 'Pendente';
+			else
+				$msg .= 'Publicado';
+			$msg .= "</td>
 			<td>";
-		if($row['status'] == 1)
-			$msg .= "<a href='index.php?acao=certificadoAlunoPublica&id={$row['id']}'>Publicar</a> &nbsp;";
+			if($row['status'] == 1)
+				$msg .= "<a href='index.php?acao=certificadoAlunoPublica&id={$row['id']}'>Publicar</a> &nbsp;";
 
 		$msg .= "<a href='index.php?acao=certificadoAlunoEdit&id={$row['id']}'>Editar</a> &nbsp;
 				<a href='index.php?acao=certificadoAlunoApaga&id={$row['id']}'>Apagar</a>
