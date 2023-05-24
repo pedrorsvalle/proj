@@ -960,7 +960,7 @@ if( $_GET['acao'] == 'certificadoAlunoNovo' || $_GET['acao'] == 'certificadoAlun
 		}
 		if( !$erro ){
 			if($_POST['id'] ) {
-				$sql = "UPDATE certificadoAluno
+				$sql = "UPDATE certificadoaluno
 				SET 
 					aluno_id ='{$_POST['aluno']}',
 					palestra_id ='{$_POST['palestra']}'
