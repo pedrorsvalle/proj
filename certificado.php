@@ -231,6 +231,8 @@ if(isset($_POST['y']))
 	$y=$_POST['y'];
 $size=40;
 
+require_once('file.php');
+
 // Create Image From Existing File
 $jpg_image = imagecreatefromjpeg($filepath.$_POST['arquivo']);
 
