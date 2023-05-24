@@ -171,7 +171,7 @@ if( $_GET['acao'] == 'pdfCertificadoDownload'){
 		$white = imagecolorallocate($jpg_image, 255, 0, 0);
 
 		// configurando as fontes
-
+		require_once('file.php');
 		// Set Path to Font File
 		#$font_path = './VelomiaVanora.ttf';
 		// usamos uma fonte ttf para escrever 
@@ -507,7 +507,7 @@ if( $_GET['acao'] == 'meuCertificadoPdf'){
 	$white = imagecolorallocate($jpg_image, 255, 0, 0);
 
 	// configurando as fontes
-
+	require_once('file.php');
 	// Set Path to Font File
 	#$font_path = './VelomiaVanora.ttf';
 	// usamos uma fonte ttf para escrever 
@@ -734,6 +734,7 @@ if( $_GET['acao'] == 'prnCertificado'){
 	// Allocate A Color For The Text
 	$white = imagecolorallocate($jpg_image, 255, 0, 0);
 
+	require_once('file.php');
 	// Set Path to Font File
 	#$font_path = './VelomiaVanora.ttf';
 	$font_path = $root_file_path.'VelomiaVanora.ttf';
