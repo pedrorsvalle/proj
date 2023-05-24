@@ -522,7 +522,7 @@ if( $_GET['acao'] == 'meuCertificadoPdf'){
 	//imagettftext($jpg_image, $size, 0, 75, 300, $white, $font_path, $text);
 	//imagettftext($jpg_image, $size, 0, $x, $y, $white, $font_path, $text);
 	imagettftext($jpg_image, $row2['nome_fonte'], 0, $row2['nomex'], $row2['nomey'], $white, $font_path, $row['aluno']);
-	imagettftext($jpg_image, $row2['data_fonte'], 0, $row2['datax'], $row2['datay'], $white, $font_path, $row['data']);
+	imagettftext($jpg_image, $row2['data_fonte'], 0, $row2['datax'], $row2['datay'], $white, $font_path, data('d/m/Y', strtotime($row['data'])));
 	imagettftext($jpg_image, $row2['curso_fonte'], 0, $row2['cursox'], $row2['cursoy'], $white, $font_path, $row['curso']);
 	imagettftext($jpg_image, $row2['palestra_fonte'], 0, $row2['palestrax'], $row2['palestray'], $white, $font_path, $row['palestra']);
 	imagettftext($jpg_image, $row2['palestrante_fonte'], 0, $row2['palestrantex'], $row2['palestrantey'], $white, $font_path, $row['palestrante']);
