@@ -232,7 +232,7 @@ if(isset($_POST['y']))
 $size=40;
 
 // Create Image From Existing File
-$jpg_image = imagecreatefromjpeg('certificados/'.$_POST['arquivo']);
+$jpg_image = imagecreatefromjpeg($filepath.$_POST['arquivo']);
 
 // Allocate A Color For The Text
 #$white = imagecolorallocate($jpg_image, 255, 255, 255);
