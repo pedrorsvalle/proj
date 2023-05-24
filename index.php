@@ -147,7 +147,7 @@ if( $_GET['acao'] == 'pdfCertificadoDownload'){
 	INNER JOIN curso c ON p.curso_id = c.id
 	INNER JOIN instituicao i ON p.instituicao_id = i.id
 	WHERE p.id = {$_GET['id']}
-	";
+	ORDER BY a.nome";
 	
 	$result = $conn->query($sql);
 
