@@ -175,7 +175,7 @@ if( $_GET['acao'] == 'pdfCertificadoDownload'){
 		// Set Path to Font File
 		#$font_path = './VelomiaVanora.ttf';
 		// usamos uma fonte ttf para escrever 
-		$font_path = './VelomiaVanora.ttf';
+		$font_path = $root_file_path.'VelomiaVanora.ttf';
 
 		// Set Text to Be Printed On Image
 		$text = "This is a sunset!";
@@ -195,7 +195,7 @@ if( $_GET['acao'] == 'pdfCertificadoDownload'){
 		// código de verificação do certificado 
 		$str = $row['aluno'].$row['email'].$row['palestra'];
 		$str = hash('sha1',$str);
-		imagettftext($jpg_image, 12, 0, 150, 700, $white, './VelomiaVanora.ttf', $str);
+		imagettftext($jpg_image, 12, 0, 150, 700, $white, $root_file_path.'VelomiaVanora.ttf', $str);
 
 
 		// código para fazer o qrcode, usa o endereço atual para codificar a url
@@ -511,7 +511,7 @@ if( $_GET['acao'] == 'meuCertificadoPdf'){
 	// Set Path to Font File
 	#$font_path = './VelomiaVanora.ttf';
 	// usamos uma fonte ttf para escrever 
-	$font_path = './VelomiaVanora.ttf';
+	$font_path = $root_file_path.'VelomiaVanora.ttf';
 
 	// Set Text to Be Printed On Image
 	$text = "This is a sunset!";
@@ -531,7 +531,7 @@ if( $_GET['acao'] == 'meuCertificadoPdf'){
 	// código de verificação do certificado 
 	$str = $row['aluno'].$row['email'].$row['palestra'];
 	$str = hash('sha1',$str);
-	imagettftext($jpg_image, 12, 0, 150, 700, $white, './VelomiaVanora.ttf', $str);
+	imagettftext($jpg_image, 12, 0, 150, 700, $white, $root_file_path.'VelomiaVanora.ttf', $str);
 
 
 	// código para fazer o qrcode, usa o endereço atual para codificar a url
@@ -736,7 +736,7 @@ if( $_GET['acao'] == 'prnCertificado'){
 
 	// Set Path to Font File
 	#$font_path = './VelomiaVanora.ttf';
-	$font_path = './VelomiaVanora.ttf';
+	$font_path = $root_file_path.'VelomiaVanora.ttf';
 
 	// Set Text to Be Printed On Image
 	$text = "This is a sunset!";

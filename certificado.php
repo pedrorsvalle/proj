@@ -240,7 +240,7 @@ $white = imagecolorallocate($jpg_image, 255, 50, 0);
 
 // Set Path to Font File
 #$font_path = './VelomiaVanora.ttf';
-$font_path = './VelomiaVanora.ttf';
+$font_path = $root_file_path.'VelomiaVanora.ttf';
 
 // Set Text to Be Printed On Image
 $text = "This is a sunset!";
