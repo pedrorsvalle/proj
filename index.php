@@ -141,7 +141,7 @@ if( $_GET['acao'] == 'pdfCertificadoDownload'){
 		p.palestrante,
 		i.instituicao,
 		p.certificado_id
-	FROM certificadoAluno ca 
+	FROM certificadoaluno ca 
 	INNER JOIN aluno a ON a.id = ca.aluno_id
 	INNER JOIN palestra p ON p.id = ca.palestra_id
 	INNER JOIN curso c ON p.curso_id = c.id
@@ -338,7 +338,7 @@ if ($_GET['acao'] == 'palestraInscricao') {
     }
 
     if (isset($_POST['OK'])) {
-        $sql = "INSERT INTO certificadoAluno (aluno_id, palestra_id ) VALUES ({$_SESSION['aluno_id']}, {$_POST['palestra']})";
+        $sql = "INSERT INTO certificadoaluno (aluno_id, palestra_id ) VALUES ({$_SESSION['aluno_id']}, {$_POST['palestra']})";
         $result = $conn->query($sql);
         //die($sql);
         if ($result == true) {
@@ -406,7 +406,7 @@ if ($_GET['acao'] == 'palestraInscricao') {
 if(!empty($_GET['acao']))
 if( $_GET['acao'] == 'palestraAlunoCancelar'){
 		
-		$sql = "DELETE FROM certificadoAluno where id= {$_GET['id']}  ";
+		$sql = "DELETE FROM certificadoaluno where id= {$_GET['id']}  ";
 		require_once('mysql.php');
 		$result = $conn->query($sql);
 		
@@ -478,7 +478,7 @@ if( $_GET['acao'] == 'meuCertificadoPdf'){
 		p.palestrante,
 		i.instituicao,
 		p.certificado_id
-	FROM certificadoAluno ca 
+	FROM certificadoaluno ca 
 	INNER JOIN aluno a ON a.id = ca.aluno_id
 	INNER JOIN palestra p ON p.id = ca.palestra_id
 	INNER JOIN curso c ON p.curso_id = c.id
@@ -656,11 +656,11 @@ if( $_GET['acao'] == 'verCertificadoAluno'){
 
 	require_once('mysql.php');
 	$sql = " 
-	select certificadoAluno.id as certificadoAlunoid, aluno.nome as nome, certificado_id
+	select certificadoaluno.id as certificadoAlunoid, aluno.nome as nome, certificado_id
 	FROM palestra 
-	LEFT JOIN certificadoAluno on palestra.id = certificadoAluno.palestra_id 
-	LEFT JOIN aluno ON aluno.id = certificadoAluno.aluno_id
-	WHERE palestra.id = {$_GET['id']} AND certificadoAluno.status = 2
+	LEFT JOIN certificadoaluno on palestra.id = certificadoaluno.palestra_id 
+	LEFT JOIN aluno ON aluno.id = certificadoaluno.aluno_id
+	WHERE palestra.id = {$_GET['id']} AND certificadoaluno.status = 2
 	";
 	//die($sql);
 	$result = $conn->query($sql);
@@ -708,7 +708,7 @@ if( $_GET['acao'] == 'prnCertificado'){
 		p.palestrante,
 		i.instituicao,
 		p.certificado_id
-	FROM certificadoAluno ca 
+	FROM certificadoaluno ca 
 	INNER JOIN aluno a ON a.id = ca.aluno_id
 	INNER JOIN palestra p ON p.id = ca.palestra_id
 	INNER JOIN curso c ON p.curso_id = c.id
@@ -792,13 +792,13 @@ if(!empty($_GET['acao']))
 if( $_GET['acao'] == 'certificadoAlunoApaga'){
 		
 		require_once('mysql.php');
-		$sql = "SELECT * FROM certificadoAluno WHERE id= {$_GET['id']}  ";
+		$sql = "SELECT * FROM certificadoaluno WHERE id= {$_GET['id']}  ";
 		$result = $conn->query($sql);
 
 		if( $result ) 
 			$row = $result->fetch_assoc();
 
-		$sql = "DELETE FROM certificadoAluno where id= {$_GET['id']}  ";
+		$sql = "DELETE FROM certificadoaluno where id= {$_GET['id']}  ";
 		$result = $conn->query($sql);
 		
 		if ($result == TRUE){
@@ -966,7 +966,7 @@ if( $_GET['acao'] == 'certificadoAlunoNovo' || $_GET['acao'] == 'certificadoAlun
 					palestra_id ='{$_POST['palestra']}'
 				where id = {$_POST['id']}";
 			} else {
-				$sql = "INSERT INTO certificadoAluno (aluno_id, palestra_id ) VALUES ({$_POST['aluno']}, {$_POST['palestra']})";
+				$sql = "INSERT INTO certificadoaluno (aluno_id, palestra_id ) VALUES ({$_POST['aluno']}, {$_POST['palestra']})";
 			}
 			$row['aluno_id'] = $_POST['aluno'];
 
@@ -1149,7 +1149,7 @@ if( $_GET['acao'] == 'certificadoAluno' ){
 
 	$sql = "SELECT ca.id, ca.aluno_id, ca.palestra_id, a.nome as aluno, c.palestra, 
 		p.palestrante, p.data, ca.status, c.curso, i.instituicao   
-	FROM certificadoAluno ca
+	FROM certificadoaluno ca
 	INNER JOIN aluno a ON ca.aluno_id = a.id
 	INNER JOIN palestra p on ca.palestra_id = p.id
 	INNER JOIN curso c on p.curso_id = c.id
