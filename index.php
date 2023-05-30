@@ -477,7 +477,8 @@ if( $_GET['acao'] == 'meuCertificadoPdf'){
 		c.palestra,
 		p.palestrante,
 		i.instituicao,
-		p.certificado_id
+		p.certificado_id,
+		ca.id as certificado_aluno_id
 	FROM certificadoaluno ca 
 	INNER JOIN aluno a ON a.id = ca.aluno_id
 	INNER JOIN palestra p ON p.id = ca.palestra_id
@@ -537,7 +538,7 @@ if( $_GET['acao'] == 'meuCertificadoPdf'){
 	// código para fazer o qrcode, usa o endereço atual para codificar a url
 	// do certificado
 	$text = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
-	$text.= "?acao=prnCertificado&id={$row['certificado_id']}";
+	$text.= "?acao=prnCertificado&id={$row['certificado_aluno_id']}";
 
 
 	QRcode::png($text,'out.png');
@@ -707,7 +708,8 @@ if( $_GET['acao'] == 'prnCertificado'){
 		c.palestra,
 		p.palestrante,
 		i.instituicao,
-		p.certificado_id
+		p.certificado_id,
+		ca.id as certificado_aluno_id
 	FROM certificadoaluno ca 
 	INNER JOIN aluno a ON a.id = ca.aluno_id
 	INNER JOIN palestra p ON p.id = ca.palestra_id
@@ -756,9 +758,11 @@ if( $_GET['acao'] == 'prnCertificado'){
 	$str = hash('sha1',$str);
 	imagettftext($jpg_image, 12, 0, 150, 700, $white, $root_file_path.'VelomiaVanora.ttf', $str);
 
-	$text = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
-	$text.= "?acao=prnCertificado&id= id= {$_GET['id']}";
 
+	// código para fazer o qrcode, usa o endereço atual para codificar a url
+	// do certificado
+	$text = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
+	$text.= "?acao=prnCertificado&id={$row['certificado_aluno_id']}";
 
 	QRcode::png($text,'out.png');
 
