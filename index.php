@@ -751,6 +751,10 @@ if( $_GET['acao'] == 'prnCertificado'){
 	imagettftext($jpg_image, $row2['palestrante_fonte'], 0, $row2['palestrantex'], $row2['palestrantey'], $white, $font_path, $row['palestrante']);
 	imagettftext($jpg_image, $row2['instituicao_fonte'], 0, $row2['instituicaox'], $row2['instituicaoy'], $white, $font_path, $row['instituicao']);
 
+	// código de verificação do certificado 
+	$str = $row['aluno'].$row['email'].$row['palestra'];
+	$str = hash('sha1',$str);
+	imagettftext($jpg_image, 12, 0, 150, 700, $white, $root_file_path.'VelomiaVanora.ttf', $str);
 
 	$text = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
 	$text.= "?acao=prnCertificado&id= id= {$_GET['id']}";
