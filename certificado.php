@@ -195,7 +195,7 @@ if (isset($_POST['texto'])) {
 	<input type="submit" name="Salvar" value="Salvar"><br>
 
 
-	<input type="image" src="out.jpg">
+	<input type="image" src="out.jpg<?php echo"?=".time();?>">
 
 
 	<input type="hidden" name="nomex" value="<?php echo $_POST['nomex'];?>">
