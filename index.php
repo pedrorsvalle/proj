@@ -785,7 +785,7 @@ if( $_GET['acao'] == 'prnCertificado'){
 
 ?>
 
-<img src="out.jpg"><?php echo"?=".time();?>">
+<img src="out.jpg<?php echo "?=".time();?>">
 
 <?php
 
