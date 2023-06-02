@@ -1273,9 +1273,6 @@ if( $_GET['acao'] == 'alunoApaga'){
 
 if(!empty($_GET['acao']))
 if( $_GET['acao'] == 'alunoNova' || $_GET['acao'] == 'alunoEdit'){
-	$_POST['id']=0;
-	$_POST['nome']='';
-	$_POST['email']='';
 
 	if( $_GET['acao'] == 'alunoEdit' && empty($_POST['OK']) ) {
 		$sql = "SELECT * FROM aluno where id= {$_GET['id']}  ";
@@ -1306,24 +1303,25 @@ if( $_GET['acao'] == 'alunoNova' || $_GET['acao'] == 'alunoEdit'){
 			}
 		require_once('mysql.php');		
 		$result = $conn->query($sql);
+
 		//die($sql);
 		if ($result == TRUE){	
 		
-		include("header.html");
-		?>
-		
-		<div class='h-100 d-flex align-items-center justify-content-center'>
-			<div style='background:green'>
-		
-				<div class='alert alert-success' role='alert'>
-					  Dados inseridos com sucesso, para prosseguir clique <a href='index.php?acao=aluno'>aqui</a>
-				</div>
+			include("header.html");
+			?>
+			
+			<div class='h-100 d-flex align-items-center justify-content-center'>
+				<div style='background:green'>
+			
+					<div class='alert alert-success' role='alert'>
+						Dados inseridos com sucesso, para prosseguir clique <a href='index.php?acao=aluno'>aqui</a>
+					</div>
 
-			</div>
-		</div>      
-		<?php
-		include("footer.html");		
-		die();			
+				</div>
+			</div>      
+			<?php
+			include("footer.html");		
+			die();			
 		} else {
 			$msg = "Erro ao inserir dados inseridos clique <a href='index.php?acao=aluno'>aqui</a>";
 			$msg .= "Error: " . $sql . "<br>" . $conn->error;
