@@ -1274,17 +1274,21 @@ if( $_GET['acao'] == 'alunoApaga'){
 if(!empty($_GET['acao']))
 if( $_GET['acao'] == 'alunoNova' || $_GET['acao'] == 'alunoEdit'){
 
-	
 	if( $_GET['acao'] == 'alunoEdit' && empty($_POST['OK']) ) {
 		$sql = "SELECT * FROM aluno where id= {$_GET['id']}  ";
 		require_once('mysql.php');
 		$result = $conn->query($sql);
-		if( $result ) $row = $result->fetch_assoc();
-		$_POST['nome']=$row['nome'];
-		$_POST['email']=$row['email'];
-		$_POST['id']=$row['id'];
+		if( $result ){
+			$row = $result->fetch_assoc();
+			$_POST['nome'] = $row['nome'];
+			$_POST['email'] = $row['email'];
+			$_POST['id'] = $row['id'];
+		}else{
+			$_POST['nome']='';
+			$_POST['email']='';
+			$_POST['id']=0;
+		}
 	}
-
 	
 	if( !empty($_POST['OK']) ) {
 		$form = 1;
@@ -1292,6 +1296,7 @@ if( $_GET['acao'] == 'alunoNova' || $_GET['acao'] == 'alunoEdit'){
 		if( !$_POST['nome'] ) { $nome_erro = "o nome não pode estar vazio"; $erro = 1; }
 		if( !$_POST['email'] ) { $data_erro = "o email não pode estar vazio"; $erro = 1; }
 		if( !$erro ){
+			var_dump($_POST);
 			if($_POST['id'] != 0) {
 				$sql = "UPDATE aluno
 				SET 
@@ -1375,7 +1380,7 @@ if( $_GET['acao'] == 'alunoNova' || $_GET['acao'] == 'alunoEdit'){
 					<table class='table table-bordered'>
 					<tr><td>Nome</td><td><input type="text" name="nome" value="<?php echo $_POST['nome'] ?? '' ?>"><td><?php echo $nome_erro ?? '' ?></td></tr>
 					<tr><td>Email</td><td><input type="text" name="email" value="<?php echo $_POST['email'] ?? '' ?>"><?php echo $email_erro ?? '' ?></td></tr>
-					<input type="hidden" name="id" value="0">
+					<input type="hidden" name="id" value="<?php echo $_POST['id'] ?>">
 					<tr><td><input type="submit" name="OK" value="OK"></td></tr>
 				</div>
 
@@ -1405,7 +1410,9 @@ if( $_GET['acao'] == 'aluno' ){
 		$msg .= "<tr>
 			<td>{$row['nome']}</td>
 			<td>{$row['email']}</td>
-			<td><a href='index.php?acao=alunoEdit&id={$row['id']}'>Editar</a> <a href='index.php?acao=alunoApaga&id={$row['id']}'>Apagar</a></td>
+			<td><a href='index.php?acao=alunoEdit&id={$row['id']}'>Editar</a> " .
+			// "<a href='index.php?acao=alunoApaga&id={$row['id']}'>Apagar</a>" .
+			"</td>
  
 			</tr>";
 		
