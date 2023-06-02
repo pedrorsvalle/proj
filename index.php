@@ -1296,7 +1296,6 @@ if( $_GET['acao'] == 'alunoNova' || $_GET['acao'] == 'alunoEdit'){
 		if( !$_POST['nome'] ) { $nome_erro = "o nome não pode estar vazio"; $erro = 1; }
 		if( !$_POST['email'] ) { $data_erro = "o email não pode estar vazio"; $erro = 1; }
 		if( !$erro ){
-			var_dump($_POST);
 			if($_POST['id'] != 0) {
 				$sql = "UPDATE aluno
 				SET 
