@@ -1273,6 +1273,9 @@ if( $_GET['acao'] == 'alunoApaga'){
 
 if(!empty($_GET['acao']))
 if( $_GET['acao'] == 'alunoNova' || $_GET['acao'] == 'alunoEdit'){
+	$_POST['id']=0;
+	$_POST['nome']='';
+	$_POST['email']='';
 
 	if( $_GET['acao'] == 'alunoEdit' && empty($_POST['OK']) ) {
 		$sql = "SELECT * FROM aluno where id= {$_GET['id']}  ";
@@ -1283,10 +1286,6 @@ if( $_GET['acao'] == 'alunoNova' || $_GET['acao'] == 'alunoEdit'){
 			$_POST['nome'] = $row['nome'];
 			$_POST['email'] = $row['email'];
 			$_POST['id'] = $row['id'];
-		}else{
-			$_POST['nome']='';
-			$_POST['email']='';
-			$_POST['id']=0;
 		}
 	}
 	
@@ -1294,7 +1293,7 @@ if( $_GET['acao'] == 'alunoNova' || $_GET['acao'] == 'alunoEdit'){
 		$form = 1;
 		$erro=0;
 		if( !$_POST['nome'] ) { $nome_erro = "o nome não pode estar vazio"; $erro = 1; }
-		if( !$_POST['email'] ) { $data_erro = "o email não pode estar vazio"; $erro = 1; }
+		if( !$_POST['email'] ) { $email_erro = "o email não pode estar vazio"; $erro = 1; }
 		if( !$erro ){
 			if($_POST['id'] != 0) {
 				$sql = "UPDATE aluno
@@ -1342,7 +1341,7 @@ if( $_GET['acao'] == 'alunoNova' || $_GET['acao'] == 'alunoEdit'){
 
 					<form method="post" action="index.php?acao=<?php echo $_GET['acao'] ?>">
 					<table class='table table-bordered'>
-					<tr><td>Nome</td><td><input type="text" name="nome" value="<?php echo $_POST['nome'] ?>"><td><?php echo $nome_erro ?></td></tr>
+					<tr><td>Nome</td><td><input type="text" name="nome" value="<?php echo $_POST['nome'] ?>"><?php echo $nome_erro ?></td></tr>
 					<tr><td>Email</td><td><input type="text" name="email" value="<?php echo $_POST['email'] ?>"><?php echo $email_erro ?></td></tr>
 					<input type="hidden" name="id" value="<?php echo $_POST['id'] ?>">
 					<tr><td><input type="submit" name="OK" value="OK"></td></tr>
@@ -1358,7 +1357,7 @@ if( $_GET['acao'] == 'alunoNova' || $_GET['acao'] == 'alunoEdit'){
 		
 		?>
 		<div class="div">
-			<?php echo $msg; ?>
+			<?php echo $msg ?? ''; ?>
 		</div>
 	
 		<?php
