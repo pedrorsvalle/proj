@@ -599,7 +599,7 @@ if( $_GET['acao'] == 'meusCertificados'){
 		INNER JOIN aluno a ON ca.aluno_id = a.id
 		INNER JOIN usuario u ON a.usuario_id = u.id
 		INNER JOIN palestra p ON ca.palestra_id = p.id
-	WHERE u.email = "' . $_SESSION['login'] . '"
+	WHERE ca.aluno_id = "' . $_SESSION['aluno_id'] . '"
 		AND ca.status = 2';
 		// AND p.data < "' . date('Y-m-d', strtotime('-3 hours')) . '"';
 
