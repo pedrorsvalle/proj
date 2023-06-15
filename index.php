@@ -2321,14 +2321,10 @@ if(isset($_GET['acao']) ) {
 
 			if ($conn->query($sql) === TRUE) {
 				//insere aluno na tabela aluno
-				$sql2 = "INSERT INTO aluno( email, nome ) 
-				values ('{$_POST['email']}', '{$_POST['nome']}')";
-				$conn->query($sql2);
-
-				$sql2 = "update aluno a 
-				inner join usuario b on a.nome = b.nome and a.email = b.email
-				set a.usuario_id = b.id 
-				where b.perfil_id = 2 and a.usuario_id is null";
+				$sql2 = "INSERT INTO aluno (usuario_id, nome, email)
+					SELECT id, nome, email 
+					FROM usuario
+					WHERE nome = '{$_POST['nome']}' and email = '{$_POST['email']}'";
 				$conn->query($sql2);
 
 				$msg = "Usuário criado com sucesso clique <a href='index.php'>aqui para login</a>";
